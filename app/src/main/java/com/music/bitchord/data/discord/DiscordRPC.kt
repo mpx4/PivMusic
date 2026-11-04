@@ -183,7 +183,7 @@ class DiscordRPC(
          * APK — a `res/` drawable has no address the presence can carry.
          */
         private const val FALLBACK_ART_URL =
-            "https://raw.githubusercontent.com/code4nigel/PivMusic/main/app/src/main/ic_launcher-playstore.png"
+            "https://raw.githubusercontent.com/mpx4/PivMusic/main/app/src/main/res/drawable-nodpi/pivmusic_logo.png"
 
         fun watchUrl(song: Song): String =
             "https://music.youtube.com/watch?v=${song.videoId}"

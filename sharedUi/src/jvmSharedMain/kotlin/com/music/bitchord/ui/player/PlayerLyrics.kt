@@ -2982,13 +2982,19 @@ internal fun rememberLyricsTranslation(
     val toggleTranslation: () -> Unit = toggleTranslation@{
         when (val state = translationState) {
             is LyricsTranslationUiState.Ready -> {
+                // A saved translation is permanent user content and always wins
+                // over the online result. The button is a simple on/off toggle:
+                // local -> original, or online -> original. It must never cycle
+                // online -> local, because that made a filled clipboard appear
+                // to replace the online translation and then get stuck on.
                 lyricsDisplayMode = if (showingTranslation) {
-                    if (localTranslation != null && state.online) LyricsDisplayMode.LocalTranslation
-                    else LyricsDisplayMode.Original
+                    LyricsDisplayMode.Original
+                } else if (localTranslation != null) {
+                    LyricsDisplayMode.LocalTranslation
+                } else if (onlineTranslation != null) {
+                    LyricsDisplayMode.Translated
                 } else {
-                    if (onlineTranslation != null) LyricsDisplayMode.Translated
-                    else if (localTranslation != null) LyricsDisplayMode.LocalTranslation
-                    else LyricsDisplayMode.Original
+                    LyricsDisplayMode.Original
                 }
                 translationTransition++
                 haptics.play(Haptic.Select)
@@ -3016,13 +3022,6 @@ internal fun rememberLyricsTranslation(
                 val source = lyrics.orEmpty()
                 if (source.isEmpty()) return@toggleTranslation
                 haptics.play(Haptic.Tap)
-                if (onlineTranslation != null) {
-                    translationState = LyricsTranslationUiState.Ready(onlineTranslation!!, online = true)
-                    lyricsDisplayMode = LyricsDisplayMode.Translated
-                    translationTransition++
-                    haptics.play(Haptic.ToggleOn)
-                    return@toggleTranslation
-                }
                 translationState = LyricsTranslationUiState.Loading()
                 romanizationJob?.cancel()
                 if (romanizationState is LyricsTranslationUiState.Loading) {
@@ -3030,13 +3029,27 @@ internal fun rememberLyricsTranslation(
                 }
                 translationJob?.cancel()
                 translationJob = translationScope.launch {
+                    // Read the clipboard-backed translation before starting
+                    // any network request. A local translation is the user's
+                    // explicit choice and must win even while online.
                     localTranslation = PlayerPlatform.host.localTranslation(trackId, translationLanguage)
-                    translationState = LyricsTranslationUiState.Loading(localTranslation)
-                    lyricsDisplayMode = if (localTranslation != null) {
-                        LyricsDisplayMode.LocalTranslation
-                    } else {
-                        LyricsDisplayMode.Translated
+                    if (localTranslation != null) {
+                        translationState = LyricsTranslationUiState.Ready(localTranslation!!, online = false)
+                        lyricsDisplayMode = LyricsDisplayMode.LocalTranslation
+                        translationTransition++
+                        haptics.play(Haptic.ToggleOn)
+                        return@launch
                     }
+                    if (onlineTranslation != null) {
+                        translationState = LyricsTranslationUiState.Ready(onlineTranslation!!, online = true)
+                        lyricsDisplayMode = LyricsDisplayMode.Translated
+                        translationTransition++
+                        haptics.play(Haptic.ToggleOn)
+                        return@launch
+                    }
+                    // No saved or cached translation exists, so this is the
+                    // online path. Keep the UI on the original while loading.
+                    lyricsDisplayMode = LyricsDisplayMode.Original
                     translationTransition++
                     when (
                         val result = PlayerPlatform.host.translateLyrics(
@@ -3059,14 +3072,8 @@ internal fun rememberLyricsTranslation(
                             PlayerPlatform.host.showMessage(alreadyInLanguageMessage)
                         }
                         LyricsTranslationResult.Unavailable -> {
-                            translationState = localTranslation?.let {
-                                LyricsTranslationUiState.Ready(it, online = false)
-                            } ?: LyricsTranslationUiState.Idle
-                            lyricsDisplayMode = if (localTranslation != null) {
-                                LyricsDisplayMode.LocalTranslation
-                            } else {
-                                LyricsDisplayMode.Original
-                            }
+                            translationState = LyricsTranslationUiState.Idle
+                            lyricsDisplayMode = LyricsDisplayMode.Original
                             PlayerPlatform.host.showMessage(translationUnavailableMessage)
                         }
                     }
