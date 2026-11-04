@@ -69,7 +69,7 @@ import com.music.bitchord.data.settings.AppSettings
 import com.music.bitchord.ui.screens.*
 
 /**
- * About ChordPlay sub-page containing app info, replay, repository links, and credits.
+ * About PivMusic sub-page containing app info, replay, repository links, and credits.
  */
 @Composable
 fun AboutSection(
@@ -99,7 +99,7 @@ fun AboutSection(
             onBack = onBack,
         )
 
-        // Hero Card: ChordPlay Branding & Version
+        // Hero Card: PivMusic Branding & Version
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -120,7 +120,7 @@ fun AboutSection(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_logo),
-                        contentDescription = "ChordPlay",
+                        contentDescription = "PivMusic",
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(36.dp),
                     )
@@ -129,7 +129,7 @@ fun AboutSection(
                 Spacer(Modifier.height(12.dp))
 
                 Text(
-                    text = "ChordPlay",
+                    text = "PivMusic",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -182,7 +182,7 @@ fun AboutSection(
                                         AppUpdateChecker.check()
                                         checkingUpdate = false
                                         if (AppUpdateChecker.available.value == null) {
-                                            Toast.makeText(context, "ChordPlay is up to date (v$version)", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "PivMusic is up to date (v$version)", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                 }
@@ -304,10 +304,10 @@ fun AboutSection(
             SettingsRow(
                 icon = Icons.Rounded.OpenInNew,
                 title = "GitHub Repository",
-                subtitle = "code4nigel/ChordPlay",
+                subtitle = "code4nigel/PivMusic",
                 onClick = {
                     runCatching {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/code4nigel/ChordPlay")))
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mpx4/PivMusic")))
                     }
                 },
             )
@@ -318,7 +318,7 @@ fun AboutSection(
                 subtitle = "Check for updates and release notes",
                 onClick = {
                     runCatching {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/code4nigel/ChordPlay/releases")))
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mpx4/PivMusic/releases")))
                     }
                 },
             )
@@ -355,8 +355,8 @@ fun AboutSection(
                         textDecoration = TextDecoration.Underline,
                     ),
                 )
-                append("ChordPlay $version by Shivanshu (code4nigel)\n")
-                withLink(LinkAnnotation.Url("https://github.com/code4nigel/ChordPlay", linkStyles)) {
+                append("PivMusic $version by Shivanshu (code4nigel)\n")
+                withLink(LinkAnnotation.Url("https://github.com/mpx4/PivMusic", linkStyles)) {
                     append("GitHub")
                 }
                 append("   ")
@@ -364,7 +364,7 @@ fun AboutSection(
                     append("Developer")
                 }
                 append("   ")
-                withLink(LinkAnnotation.Url("https://github.com/code4nigel/ChordPlay/releases", linkStyles)) {
+                withLink(LinkAnnotation.Url("https://github.com/mpx4/PivMusic/releases", linkStyles)) {
                     append("Releases")
                 }
                 append("\nBased on BitChord by Kushagra Singh\n")

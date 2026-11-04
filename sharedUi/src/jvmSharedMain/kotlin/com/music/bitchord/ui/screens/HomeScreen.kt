@@ -203,7 +203,7 @@ fun HomeScreen(
             if (title != null) {
                 if (designStyle == AppDesignStyle.CHORDPLAY) {
                     item(key = "chordplay_header") {
-                        ChordPlayHomeHeader()
+                        PivMusicHomeHeader()
                     }
                 } else {
                     item(key = "home_title") { HomeTitle(title) }
@@ -245,7 +245,7 @@ fun HomeScreen(
                     // The loading skeleton already owns the hero slot. Until
                     // Recently Played lands, every real shelf must retain its
                     // compact-card layout instead of briefly becoming a hero.
-                    // Speed Dial Grid (ChordPlay Modern only)
+                    // Speed Dial Grid (PivMusic Modern only)
                     if (speedDialItems.isNotEmpty()) {
                         item(key = "home_speed_dial_header") {
                             SpeedDialSectionHeader(
@@ -615,10 +615,10 @@ private fun getGreetingList(userName: String? = null): List<String> = listOf(
 )
 
 /**
- * ChordPlay Living Home Screen dynamic greeting header with cycling greetings.
+ * PivMusic Living Home Screen dynamic greeting header with cycling greetings.
  */
 @Composable
-private fun ChordPlayHomeHeader(
+private fun PivMusicHomeHeader(
     userName: String? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -653,7 +653,7 @@ private fun ChordPlayHomeHeader(
                     .aspectRatio(LOGO_ASPECT),
             )
             Text(
-                text = "ChordPlay",
+                text = "PivMusic",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,

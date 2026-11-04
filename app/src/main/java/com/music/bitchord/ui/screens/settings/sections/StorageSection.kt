@@ -231,7 +231,7 @@ fun StorageSection(
             SettingsRow(
                 icon = Icons.Rounded.Folder,
                 title = exportDownloadsTitle,
-                subtitle = "Music/ChordPlay".takeIf { exportDownloads },
+                subtitle = "Music/PivMusic".takeIf { exportDownloads },
                 trailing = {
                     Switch(
                         checked = exportDownloads,

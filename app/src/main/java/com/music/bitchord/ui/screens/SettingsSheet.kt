@@ -46,7 +46,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -111,7 +110,10 @@ fun SettingsScreen(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
-    var currentSection by rememberSaveable { mutableStateOf<SettingsSection?>(null) }
+    // This enum is only navigation state for the open sheet. Keeping it in
+    // SaveableState can fail during a production process restore/transition;
+    // ordinary Compose state is sufficient and avoids crashing on selection.
+    var currentSection by remember { mutableStateOf<SettingsSection?>(null) }
 
     BackHandler(enabled = currentSection != null) {
         currentSection = null
@@ -238,7 +240,7 @@ private fun SettingsHub(
         SettingsSection.AUDIO -> "Audio • ${wifiQuality.localizedQualityLabel()}, ${crossfade}s Crossfade"
         SettingsSection.STORAGE -> "Storage • $cacheLimitMb MB Limit"
         SettingsSection.INTEGRATIONS -> "Account • ${if (signedIn) channelName ?: account?.name ?: stringResource(R.string.youtube_music_account) else "Guest"}"
-        SettingsSection.ABOUT -> "ChordPlay v${BuildConfig.VERSION_NAME} • Updates, Links & Info"
+        SettingsSection.ABOUT -> "PivMusic v${BuildConfig.VERSION_NAME} • Updates, Links & Info"
     }
 
     val filteredSections = remember(searchQuery) {
@@ -571,8 +573,8 @@ private fun SettingsFooter(version: String, modifier: Modifier = Modifier) {
                     textDecoration = TextDecoration.Underline,
                 ),
             )
-            append("ChordPlay $version by Shivanshu (code4nigel)\n")
-            withLink(LinkAnnotation.Url("https://github.com/code4nigel/ChordPlay", linkStyles)) {
+            append("PivMusic $version by Shivanshu (code4nigel)\n")
+            withLink(LinkAnnotation.Url("https://github.com/mpx4/PivMusic", linkStyles)) {
                 append("GitHub")
             }
             append("   ")
@@ -580,7 +582,7 @@ private fun SettingsFooter(version: String, modifier: Modifier = Modifier) {
                 append("Developer")
             }
             append("   ")
-            withLink(LinkAnnotation.Url("https://github.com/code4nigel/ChordPlay/releases", linkStyles)) {
+            withLink(LinkAnnotation.Url("https://github.com/mpx4/PivMusic/releases", linkStyles)) {
                 append("Releases")
             }
             append("\nBased on BitChord by Kushagra Singh\n")

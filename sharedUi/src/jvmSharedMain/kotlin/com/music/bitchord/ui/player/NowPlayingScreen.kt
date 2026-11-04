@@ -805,9 +805,9 @@ fun NowPlayingScreen(
     val playerLayoutMode by PlayerSettings.playerLayoutMode.collectAsStateWithLifecycle()
     val enableBreathingAura by PlayerSettings.enableBreathingAura.collectAsStateWithLifecycle()
     val fullscreenLyricsStyle by PlayerSettings.fullscreenArtworkLyricsStyle.collectAsStateWithLifecycle()
-    val isChordPlay = appDesignStyle == AppDesignStyle.CHORDPLAY
-    val isModernAmbient = isChordPlay && playerLayoutMode == PlayerLayoutMode.MODERN_AMBIENT
-    val isVinylRecord = isChordPlay && playerLayoutMode == PlayerLayoutMode.VINYL_RECORD
+    val isPivMusic = appDesignStyle == AppDesignStyle.CHORDPLAY
+    val isModernAmbient = isPivMusic && playerLayoutMode == PlayerLayoutMode.MODERN_AMBIENT
+    val isVinylRecord = isPivMusic && playerLayoutMode == PlayerLayoutMode.VINYL_RECORD
     val isModernOrVinyl = isModernAmbient || isVinylRecord
 
     // Animated cover art: the looping video some labels publish alongside a
@@ -2832,9 +2832,9 @@ fun NowPlayingScreen(
                     return if (dock == null || t >= 1f) corner else lerp(dock.miniArtCorner(), corner, t)
                 }
 
-                // Breathing artwork aura for ChordPlay Modern mode
+                // Breathing artwork aura for PivMusic Modern mode
                 if (isModernAmbient && enableBreathingAura && art.loaded && dockT() > 0.8f && !heroMode && bannerShare() == 0f) {
-                    ChordPlayAmbientAura(
+                    PivMusicAmbientAura(
                         model = art.request,
                         isPlaying = isPlaying,
                         modifier = Modifier
@@ -2852,7 +2852,7 @@ fun NowPlayingScreen(
 
                 // Vinyl turntable record sliding out from sleeve
                 if (isVinylRecord && art.loaded && dockT() > 0.8f && !heroMode && bannerShare() == 0f) {
-                    ChordPlayVinylRecord(
+                    PivMusicVinylRecord(
                         model = art.request,
                         isPlaying = isPlaying,
                         modifier = Modifier
@@ -3731,7 +3731,7 @@ fun NowPlayingScreen(
                 onScrubFinished = onScrubFinished,
             ) {
                 if (isModernOrVinyl) {
-                    ChordPlayAudioFidelityBadge(
+                    PivMusicAudioFidelityBadge(
                         song = song,
                         isLoading = isLoading,
                         onClick = { showAudioPipeline = true },
@@ -3758,7 +3758,7 @@ fun NowPlayingScreen(
             Spacer(Modifier.height(8.dp + controlSpread / 2))
 
             if (isModernOrVinyl) {
-                ChordPlayTransportDeck(
+                PivMusicTransportDeck(
                     isPlaying = isPlaying,
                     isLoading = isLoading || audioVersionSwitching,
                     previousEnabled = !controlsLocked &&

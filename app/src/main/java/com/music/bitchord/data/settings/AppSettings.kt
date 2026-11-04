@@ -111,16 +111,16 @@ enum class DownloadQuality(
 // AppDesignStyle is defined in PlayerEnums.kt (shared module) for multiplatform access.
 
 /**
- * Curated atmospheric colorways for the ChordPlay Modern design system.
+ * Curated atmospheric colorways for the PivMusic Modern design system.
  */
-enum class ChordPlayPalette(
+enum class PivMusicPalette(
     val label: String,
     val detail: String,
     val primaryColorHex: Long,
     val secondaryColorHex: Long,
 ) {
     CHORDPLAY_CRIMSON(
-        label = "ChordPlay Crimson",
+        label = "PivMusic Crimson",
         detail = "Iconic ruby crimson, neon rose and velvety obsidian",
         primaryColorHex = 0xFFFD3F69,
         secondaryColorHex = 0xFFFF5277,
@@ -419,7 +419,7 @@ object AppSettings {
     val playbackSpeed = MutableStateFlow(1.0f)
     val themeMode = MutableStateFlow(ThemeMode.DARK)
     val appDesignStyle = MutableStateFlow(AppDesignStyle.CHORDPLAY)
-    val colorPalette = MutableStateFlow(ChordPlayPalette.DYNAMIC_ARTWORK)
+    val colorPalette = MutableStateFlow(PivMusicPalette.DYNAMIC_ARTWORK)
 
     /** Currently playing track artwork URL for dynamic artwork theming. */
     val activeTrackArtworkUrl = MutableStateFlow<String?>(null)
@@ -427,7 +427,7 @@ object AppSettings {
     /** Custom saved palettes frozen from dynamic artwork or manually preserved. */
     val customPalettes = MutableStateFlow<List<CustomPalette>>(emptyList())
 
-    /** Currently active custom palette ID, or null if using a standard [ChordPlayPalette]. */
+    /** Currently active custom palette ID, or null if using a standard [PivMusicPalette]. */
     val activeCustomPaletteId = MutableStateFlow<String?>(null)
 
     /** Pinned items in the Home Speed Dial grid. */
@@ -715,7 +715,7 @@ object AppSettings {
      */
     val pinnedPlaylists = MutableStateFlow<List<String>>(emptyList())
 
-    /** Playlists created within ChordPlay so they can be visually distinguished from imported/cloud lists. */
+    /** Playlists created within PivMusic so they can be visually distinguished from imported/cloud lists. */
     val chordplayPlaylistIds = MutableStateFlow<Set<String>>(emptySet())
 
     fun addChordplayPlaylistId(playlistId: String) {
@@ -943,8 +943,8 @@ object AppSettings {
         }.getOrDefault(ThemeMode.DARK)
 
         colorPalette.value = runCatching {
-            ChordPlayPalette.valueOf(prefs.getString(KEY_COLOR_PALETTE, null) ?: ChordPlayPalette.DYNAMIC_ARTWORK.name)
-        }.getOrDefault(ChordPlayPalette.DYNAMIC_ARTWORK)
+            PivMusicPalette.valueOf(prefs.getString(KEY_COLOR_PALETTE, null) ?: PivMusicPalette.DYNAMIC_ARTWORK.name)
+        }.getOrDefault(PivMusicPalette.DYNAMIC_ARTWORK)
         autoplay.value = prefs.getBoolean(KEY_AUTOPLAY, true)
         shuffleEnabled.value = prefs.getBoolean(KEY_SHUFFLE_ENABLED, false)
         repeatMode.value = prefs.getInt(KEY_REPEAT_MODE, Player.REPEAT_MODE_OFF)
@@ -1346,7 +1346,7 @@ object AppSettings {
         }
     }
 
-    fun setColorPalette(value: ChordPlayPalette) {
+    fun setColorPalette(value: PivMusicPalette) {
         colorPalette.value = value
         if (this::prefs.isInitialized) {
             prefs.edit().putString(KEY_COLOR_PALETTE, value.name).apply()

@@ -21,7 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.music.bitchord.R
 import com.music.bitchord.data.settings.AppDesignStyle
 import com.music.bitchord.data.settings.AppSettings
-import com.music.bitchord.data.settings.ChordPlayPalette
+import com.music.bitchord.data.settings.PivMusicPalette
 
 // Apple Music's signature red. No longer the primary accent, but kept for the
 // spots (Replay's rank badge) that want that specific red regardless of theme.
@@ -115,7 +115,7 @@ fun BitChordClassicTheme(
 /**
  * Global Theme Wrapper.
  * Dispatches to [BitChordClassicTheme] when [AppDesignStyle.CLASSIC_BITCHORD] is selected,
- * or [ChordPlayTheme] with the curated [ChordPlayPalette] when [AppDesignStyle.CHORDPLAY] is selected.
+ * or [PivMusicTheme] with the curated [PivMusicPalette] when [AppDesignStyle.CHORDPLAY] is selected.
  */
 @Composable
 fun BitChordTheme(
@@ -128,15 +128,15 @@ fun BitChordTheme(
     if (designStyle == AppDesignStyle.CLASSIC_BITCHORD) {
         BitChordClassicTheme(darkTheme = darkTheme, content = content)
     } else {
-        ChordPlayTheme(darkTheme = darkTheme, palette = palette, content = content)
+        PivMusicTheme(darkTheme = darkTheme, palette = palette, content = content)
     }
 }
 
 /**
- * Direct reference to the ChordPlay theme engine wrapper.
+ * Direct reference to the PivMusic theme engine wrapper.
  */
 @Composable
-fun ChordPlayAppTheme(
+fun PivMusicAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) = BitChordTheme(darkTheme = darkTheme, content = content)

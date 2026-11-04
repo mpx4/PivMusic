@@ -20,21 +20,21 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import com.music.bitchord.data.settings.AppSettings
-import com.music.bitchord.data.settings.ChordPlayPalette
+import com.music.bitchord.data.settings.PivMusicPalette
 
 /**
- * Extended tactile and atmospheric colors for the ChordPlay Modern design system.
+ * Extended tactile and atmospheric colors for the PivMusic Modern design system.
  */
 @Immutable
-data class ChordPlayExtendedColors(
+data class PivMusicExtendedColors(
     val glow: Color,
     val surfaceGlass: Color,
     val borderHighlight: Color,
     val isAtmosphericDark: Boolean,
 )
 
-val LocalChordPlayExtendedColors = staticCompositionLocalOf {
-    ChordPlayExtendedColors(
+val LocalPivMusicExtendedColors = staticCompositionLocalOf {
+    PivMusicExtendedColors(
         glow = Color(0xFF00D2D3),
         surfaceGlass = Color(0xFF141622),
         borderHighlight = Color.White.copy(alpha = 0.08f),
@@ -45,7 +45,7 @@ val LocalChordPlayExtendedColors = staticCompositionLocalOf {
 // -------------------------------------------------------------------------
 // 0. CHORDPLAY CRIMSON (App Launcher Icon Signature)
 // -------------------------------------------------------------------------
-val ChordPlayCrimsonDarkColors = darkColorScheme(
+val PivMusicCrimsonDarkColors = darkColorScheme(
     primary = Color(0xFFFD3F69),
     onPrimary = Color.White,
     primaryContainer = Color(0xFF38101C),
@@ -66,7 +66,7 @@ val ChordPlayCrimsonDarkColors = darkColorScheme(
     outlineVariant = Color(0xFF2D1520),
 )
 
-val ChordPlayCrimsonLightColors = lightColorScheme(
+val PivMusicCrimsonLightColors = lightColorScheme(
     primary = Color(0xFFD60237),
     onPrimary = Color.White,
     primaryContainer = Color(0xFFFFD9E2),
@@ -270,7 +270,7 @@ val MonochromeLightColors = lightColorScheme(
 // -------------------------------------------------------------------------
 // Modern Elevated Typography
 // -------------------------------------------------------------------------
-val ChordPlayTypography = Typography(
+val PivMusicTypography = Typography(
     displayLarge = TextStyle(fontWeight = FontWeight.W800, fontSize = 34.sp, letterSpacing = 0.sp),
     headlineLarge = TextStyle(fontWeight = FontWeight.W800, fontSize = 28.sp, letterSpacing = (-0.2).sp),
     headlineMedium = TextStyle(fontWeight = FontWeight.W700, fontSize = 22.sp, letterSpacing = 0.sp),
@@ -284,13 +284,13 @@ val ChordPlayTypography = Typography(
 ).withFamily(SFProDisplay)
 
 /**
- * ChordPlay Modern design system theme provider.
+ * PivMusic Modern design system theme provider.
  * Renders atmospheric surfaces, luminous accents, and tactile design elements.
  */
 @Composable
-fun ChordPlayTheme(
+fun PivMusicTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    palette: ChordPlayPalette = ChordPlayPalette.DYNAMIC_ARTWORK,
+    palette: PivMusicPalette = PivMusicPalette.DYNAMIC_ARTWORK,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
@@ -301,7 +301,7 @@ fun ChordPlayTheme(
         customPalettes.firstOrNull { it.id == id }
     }
 
-    val dynamicArtworkPalette = if (activeCustomPalette == null && palette == ChordPlayPalette.DYNAMIC_ARTWORK) {
+    val dynamicArtworkPalette = if (activeCustomPalette == null && palette == PivMusicPalette.DYNAMIC_ARTWORK) {
         rememberArtworkPalette(imageUrl = activeArtworkUrl, dark = darkTheme)
     } else null
 
@@ -356,7 +356,7 @@ fun ChordPlayTheme(
                 )
             }
         }
-        palette == ChordPlayPalette.DYNAMIC_ARTWORK && dynamicArtworkPalette != null -> {
+        palette == PivMusicPalette.DYNAMIC_ARTWORK && dynamicArtworkPalette != null -> {
             if (darkTheme) {
                 darkColorScheme(
                     primary = dynamicArtworkPalette.accent,
@@ -400,13 +400,13 @@ fun ChordPlayTheme(
             }
         }
         else -> when (palette) {
-            ChordPlayPalette.CHORDPLAY_CRIMSON, ChordPlayPalette.DYNAMIC_ARTWORK ->
-                if (darkTheme) ChordPlayCrimsonDarkColors else ChordPlayCrimsonLightColors
-            ChordPlayPalette.ELECTRIC_VIOLET -> if (darkTheme) ElectricVioletDarkColors else ElectricVioletLightColors
-            ChordPlayPalette.SUNSET_AMBER -> if (darkTheme) SunsetAmberDarkColors else SunsetAmberLightColors
-            ChordPlayPalette.EMERALD_NOIR -> if (darkTheme) EmeraldNoirDarkColors else EmeraldNoirLightColors
-            ChordPlayPalette.MONOCHROME -> if (darkTheme) MonochromeDarkColors else MonochromeLightColors
-            ChordPlayPalette.DYNAMIC_MONET -> {
+            PivMusicPalette.CHORDPLAY_CRIMSON, PivMusicPalette.DYNAMIC_ARTWORK ->
+                if (darkTheme) PivMusicCrimsonDarkColors else PivMusicCrimsonLightColors
+            PivMusicPalette.ELECTRIC_VIOLET -> if (darkTheme) ElectricVioletDarkColors else ElectricVioletLightColors
+            PivMusicPalette.SUNSET_AMBER -> if (darkTheme) SunsetAmberDarkColors else SunsetAmberLightColors
+            PivMusicPalette.EMERALD_NOIR -> if (darkTheme) EmeraldNoirDarkColors else EmeraldNoirLightColors
+            PivMusicPalette.MONOCHROME -> if (darkTheme) MonochromeDarkColors else MonochromeLightColors
+            PivMusicPalette.DYNAMIC_MONET -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     if (darkTheme) {
                         val dynamic = dynamicDarkColorScheme(context)
@@ -426,7 +426,7 @@ fun ChordPlayTheme(
                         )
                     }
                 } else {
-                    if (darkTheme) ChordPlayCrimsonDarkColors else ChordPlayCrimsonLightColors
+                    if (darkTheme) PivMusicCrimsonDarkColors else PivMusicCrimsonLightColors
                 }
             }
         }
@@ -437,15 +437,15 @@ fun ChordPlayTheme(
             val primary = Color(activeCustomPalette.primaryHex)
             val secondary = Color(activeCustomPalette.secondaryHex)
             val surf = Color(activeCustomPalette.surfaceHex)
-            ChordPlayExtendedColors(
+            PivMusicExtendedColors(
                 glow = secondary,
                 surfaceGlass = surf.copy(alpha = 0.85f),
                 borderHighlight = primary.copy(alpha = 0.25f),
                 isAtmosphericDark = darkTheme,
             )
         }
-        palette == ChordPlayPalette.DYNAMIC_ARTWORK && dynamicArtworkPalette != null -> {
-            ChordPlayExtendedColors(
+        palette == PivMusicPalette.DYNAMIC_ARTWORK && dynamicArtworkPalette != null -> {
+            PivMusicExtendedColors(
                 glow = dynamicArtworkPalette.accent,
                 surfaceGlass = dynamicArtworkPalette.wash.copy(alpha = 0.85f),
                 borderHighlight = dynamicArtworkPalette.accent.copy(alpha = 0.25f),
@@ -453,37 +453,37 @@ fun ChordPlayTheme(
             )
         }
         else -> when (palette) {
-            ChordPlayPalette.CHORDPLAY_CRIMSON, ChordPlayPalette.DYNAMIC_ARTWORK -> ChordPlayExtendedColors(
+            PivMusicPalette.CHORDPLAY_CRIMSON, PivMusicPalette.DYNAMIC_ARTWORK -> PivMusicExtendedColors(
                 glow = Color(0xFFFF2A6D),
                 surfaceGlass = if (darkTheme) Color(0xFF1E1017) else Color(0xFFFAF0F3),
                 borderHighlight = Color(0xFFFD3F69).copy(alpha = 0.22f),
                 isAtmosphericDark = darkTheme,
             )
-            ChordPlayPalette.ELECTRIC_VIOLET -> ChordPlayExtendedColors(
+            PivMusicPalette.ELECTRIC_VIOLET -> PivMusicExtendedColors(
                 glow = Color(0xFF00D2D3),
                 surfaceGlass = if (darkTheme) Color(0xFF141622) else Color(0xFFF0F1FA),
                 borderHighlight = if (darkTheme) Color(0xFF7C4DFF).copy(alpha = 0.20f) else Color(0xFF7C4DFF).copy(alpha = 0.12f),
                 isAtmosphericDark = darkTheme,
             )
-            ChordPlayPalette.SUNSET_AMBER -> ChordPlayExtendedColors(
+            PivMusicPalette.SUNSET_AMBER -> PivMusicExtendedColors(
                 glow = Color(0xFFFF6B6B),
                 surfaceGlass = if (darkTheme) Color(0xFF1A1410) else Color(0xFFFAF2EB),
                 borderHighlight = if (darkTheme) Color(0xFFFF9F43).copy(alpha = 0.20f) else Color(0xFFFF9F43).copy(alpha = 0.12f),
                 isAtmosphericDark = darkTheme,
             )
-            ChordPlayPalette.EMERALD_NOIR -> ChordPlayExtendedColors(
+            PivMusicPalette.EMERALD_NOIR -> PivMusicExtendedColors(
                 glow = Color(0xFF00B0FF),
                 surfaceGlass = if (darkTheme) Color(0xFF0F1D16) else Color(0xFFEBF6F0),
                 borderHighlight = if (darkTheme) Color(0xFF00E676).copy(alpha = 0.20f) else Color(0xFF00E676).copy(alpha = 0.12f),
                 isAtmosphericDark = darkTheme,
             )
-            ChordPlayPalette.MONOCHROME -> ChordPlayExtendedColors(
+            PivMusicPalette.MONOCHROME -> PivMusicExtendedColors(
                 glow = if (darkTheme) Color(0xFFFFFFFF).copy(alpha = 0.45f) else Color(0xFF000000).copy(alpha = 0.25f),
                 surfaceGlass = if (darkTheme) Color(0xFF141416).copy(alpha = 0.88f) else Color(0xFFFAFAFA).copy(alpha = 0.90f),
                 borderHighlight = if (darkTheme) Color(0xFFFFFFFF).copy(alpha = 0.18f) else Color(0xFF000000).copy(alpha = 0.12f),
                 isAtmosphericDark = darkTheme,
             )
-            ChordPlayPalette.DYNAMIC_MONET -> ChordPlayExtendedColors(
+            PivMusicPalette.DYNAMIC_MONET -> PivMusicExtendedColors(
                 glow = colorScheme.secondary,
                 surfaceGlass = colorScheme.surfaceVariant.copy(alpha = 0.75f),
                 borderHighlight = colorScheme.primary.copy(alpha = 0.25f),
@@ -493,11 +493,11 @@ fun ChordPlayTheme(
     }
 
     CompositionLocalProvider(
-        LocalChordPlayExtendedColors provides extendedColors,
+        LocalPivMusicExtendedColors provides extendedColors,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = ChordPlayTypography,
+            typography = PivMusicTypography,
             content = content,
         )
     }

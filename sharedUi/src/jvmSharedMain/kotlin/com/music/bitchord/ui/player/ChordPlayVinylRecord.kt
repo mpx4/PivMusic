@@ -31,7 +31,7 @@ import kotlinx.coroutines.isActive
  * and slides out from behind the album jacket in [PlayerLayoutMode.VINYL_RECORD].
  */
 @Composable
-fun ChordPlayVinylRecord(
+fun PivMusicVinylRecord(
     model: Any?,
     isPlaying: Boolean,
     modifier: Modifier = Modifier,

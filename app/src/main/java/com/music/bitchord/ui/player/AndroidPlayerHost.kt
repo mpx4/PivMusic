@@ -16,6 +16,7 @@ import com.music.bitchord.data.canvas.CanvasArtwork
 import com.music.bitchord.data.canvas.CanvasRepository
 import com.music.bitchord.data.listentogether.ListenTogether
 import com.music.bitchord.data.lyrics.LyricLine
+import com.music.bitchord.data.lyrics.LocalLyricsStore
 import com.music.bitchord.data.lyrics.LyricsTranslation
 import com.music.bitchord.data.model.Song
 import com.music.bitchord.data.settings.AppSettings
@@ -45,6 +46,10 @@ import kotlin.math.roundToInt
  */
 class AndroidPlayerHost(context: Context) : PlayerHost {
     private val app = context.applicationContext
+    private val localLyrics = LocalLyricsStore(app)
+    override val localLyricsEditingAvailable: Boolean get() = true
+    private val _localLyricsRevision = MutableStateFlow(0L)
+    override val localLyricsRevision: StateFlow<Long> = _localLyricsRevision.asStateFlow()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val main = Handler(Looper.getMainLooper())
 
@@ -143,6 +148,21 @@ class AndroidPlayerHost(context: Context) : PlayerHost {
             is LyricsTranslation.Result.SameLanguage -> LyricsTranslationResult.SameLanguage(result.language)
             LyricsTranslation.Result.Unavailable -> LyricsTranslationResult.Unavailable
         }
+
+    override suspend fun localLyrics(trackId: String): List<LyricLine>? = localLyrics.lyrics(trackId)
+
+    override suspend fun localTranslation(trackId: String, targetLanguageTag: String): List<LyricLine>? =
+        localLyrics.translation(trackId, targetLanguageTag)
+
+    override suspend fun saveLocalLyrics(
+        trackId: String,
+        lines: List<LyricLine>,
+        translation: List<LyricLine>?,
+        targetLanguageTag: String?,
+    ) {
+        localLyrics.save(trackId, lines, translation, targetLanguageTag)
+        _localLyricsRevision.value += 1L
+    }
 
     override suspend fun romanizeLyrics(
         trackId: String,

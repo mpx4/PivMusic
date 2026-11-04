@@ -82,7 +82,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.music.bitchord.R
 import com.music.bitchord.data.settings.AppDesignStyle
 import com.music.bitchord.data.settings.AppSettings
-import com.music.bitchord.data.settings.ChordPlayPalette
+import com.music.bitchord.data.settings.PivMusicPalette
 import com.music.bitchord.data.settings.ThemeMode
 import com.music.bitchord.ui.components.isGlassSupported
 import com.music.bitchord.ui.components.languageDisplayNameRes
@@ -196,7 +196,7 @@ fun AppearanceSection(
             }
         }
 
-        // 2. Curated Atmospheric Color Palettes (When ChordPlay Modern is active)
+        // 2. Curated Atmospheric Color Palettes (When PivMusic Modern is active)
         if (designStyle == AppDesignStyle.CHORDPLAY) {
             SettingsGroup(header = stringResource(R.string.color_palette)) {
                 SettingsRow(
@@ -704,8 +704,8 @@ private fun SwipeActionPickerDialog(
  */
 @Composable
 private fun PaletteCarousel(
-    selectedPalette: ChordPlayPalette?,
-    onSelectPalette: (ChordPlayPalette) -> Unit,
+    selectedPalette: PivMusicPalette?,
+    onSelectPalette: (PivMusicPalette) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val haptics = LocalHapticFeedback.current
@@ -714,20 +714,20 @@ private fun PaletteCarousel(
         contentPadding = PaddingValues(horizontal = ROW_INSET),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        items(ChordPlayPalette.entries) { item ->
+        items(PivMusicPalette.entries) { item ->
             val isSelected = item == selectedPalette
-            val primaryColor = if (item == ChordPlayPalette.DYNAMIC_MONET && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val primaryColor = if (item == PivMusicPalette.DYNAMIC_MONET && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 MaterialTheme.colorScheme.primary
             } else {
                 Color(item.primaryColorHex)
             }
-            val secondaryColor = if (item == ChordPlayPalette.DYNAMIC_MONET && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val secondaryColor = if (item == PivMusicPalette.DYNAMIC_MONET && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 MaterialTheme.colorScheme.secondary
             } else {
                 Color(item.secondaryColorHex)
             }
 
-            val isDynamicArt = item == ChordPlayPalette.DYNAMIC_ARTWORK
+            val isDynamicArt = item == PivMusicPalette.DYNAMIC_ARTWORK
             val goldColor = Color(0xFFFFD700)
             val goldBrush = Brush.sweepGradient(
                 listOf(Color(0xFFFFD700), Color(0xFFFFA000), Color(0xFFFFE082), Color(0xFFFFD700)),

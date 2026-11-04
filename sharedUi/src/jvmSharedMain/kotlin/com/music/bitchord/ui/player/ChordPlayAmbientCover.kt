@@ -22,16 +22,16 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 
 /**
- * Breathing ambient aura rendered behind the squircle album cover in ChordPlay Modern mode.
+ * Breathing ambient aura rendered behind the squircle album cover in PivMusic Modern mode.
  * Creates an atmospheric audio stage that pulses rhythmically during audio playback.
  */
 @Composable
-fun ChordPlayAmbientAura(
+fun PivMusicAmbientAura(
     model: Any?,
     isPlaying: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "ChordPlayAuraPulse")
+    val infiniteTransition = rememberInfiniteTransition(label = "PivMusicAuraPulse")
 
     // Breathing pulse scale: 1.05f to 1.12f when playing
     val pulseScale by infiniteTransition.animateFloat(

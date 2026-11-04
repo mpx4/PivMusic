@@ -128,6 +128,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.music.bitchord.ui.player.PlayerPlatform
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.music.bitchord.auth.DiscordLoginScreen
 import com.music.bitchord.auth.WebSessionMode
@@ -987,6 +988,10 @@ private fun BitChordApp(
     // the track already playing rather than only the next one.
     val syncedLyricsEnabled by AppSettings.syncedLyrics.collectAsStateWithLifecycle()
     val lyricsSources by AppSettings.lyricsSources.collectAsStateWithLifecycle()
+    val localLyricsRevision by PlayerPlatform.host.localLyricsRevision.collectAsStateWithLifecycle()
+    LaunchedEffect(localLyricsRevision) {
+        if (localLyricsRevision > 0L) viewModel.refreshCurrentLyrics()
+    }
     LaunchedEffect(player.song?.videoId, player.durationMs, syncedLyricsEnabled, lyricsSources) {
         player.song?.let {
             viewModel.loadLyrics(

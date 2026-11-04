@@ -75,13 +75,13 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.chordplay.music"
+        applicationId = "com.music.piv.lol"
         // 26 keeps reach wide; real-time blur (RenderEffect) kicks in on API 31+,
         // Haze falls back to a translucent scrim below that.
         minSdk = 26
         targetSdk = 36
-        versionCode = 39
-        versionName = "2.0.2"
+        versionCode = 44
+        versionName = "2.0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -119,11 +119,11 @@ android {
         create("dev") {
             dimension = "env"
             applicationId = "com.dev.chordplay"
-            resValue("string", "app_name", "ChordPlay")
+            resValue("string", "app_name", "PivMusic")
         }
         create("prod") {
             dimension = "env"
-            resValue("string", "app_name", "ChordPlay")
+            resValue("string", "app_name", "PivMusic")
         }
     }
 

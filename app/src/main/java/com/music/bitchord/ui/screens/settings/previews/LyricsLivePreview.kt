@@ -115,7 +115,7 @@ fun LyricsLivePreview(
                     }
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        text = "Starlight Echoes • ChordPlay",
+                        text = "Starlight Echoes • PivMusic",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

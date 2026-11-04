@@ -4198,7 +4198,7 @@ private fun DesktopTopBar(
                 // The mark leads the player's own controls, now that the sidebar runs to the top.
                 Image(
                     painter = painterResource(Res.drawable.logo_mark),
-                    contentDescription = "ChordPlay",
+                    contentDescription = "PivMusic",
                     modifier = Modifier.size(20.dp),
                 )
                 Spacer(Modifier.width(14.dp))

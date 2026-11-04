@@ -1,20 +1,20 @@
-# ChordPlay Evolution & Design Revolution Master Plan
+# PivMusic Evolution & Design Revolution Master Plan
 
 > **Core Philosophy**: *Never Copy, Always Elevate.*  
-> Transform ChordPlay into an atmospheric, high-end music streaming experience with its own visual soul, tactile audio player, and dynamic discovery hub, while guaranteeing **100% backward compatibility** to the original BitChord design via a single setting toggle.
+> Transform PivMusic into an atmospheric, high-end music streaming experience with its own visual soul, tactile audio player, and dynamic discovery hub, while guaranteeing **100% backward compatibility** to the original BitChord design via a single setting toggle.
 
 ---
 
 ## Architecture Principles & Backward Compatibility Guarantee
 
 ### The "Classic BitChord" Fallback Requirement
-ChordPlay will introduce rich visual identity enhancements, but users must always retain the option to revert to the exact, original BitChord / Apple Music monochrome aesthetic at any time.
+PivMusic will introduce rich visual identity enhancements, but users must always retain the option to revert to the exact, original BitChord / Apple Music monochrome aesthetic at any time.
 
 This is governed by a core setting in `AppSettings`:
 
 ```kotlin
 enum class AppDesignStyle(val label: String, val detail: String) {
-    CHORDPLAY("ChordPlay Modern", "Atmospheric glowing glass, vibrant palettes, tactile controls, and dynamic discovery"),
+    CHORDPLAY("PivMusic Modern", "Atmospheric glowing glass, vibrant palettes, tactile controls, and dynamic discovery"),
     CLASSIC_BITCHORD("Classic BitChord", "Original Apple Music-inspired monochrome dark UI, standard player, and default shelves")
 }
 ```
@@ -31,12 +31,12 @@ When `AppDesignStyle.CLASSIC_BITCHORD` is selected:
 # Phase 1: Theme Engine & Design System
 
 ### 🎯 Objective
-Replace the hard-coded monochrome Apple palette with a dynamic, curated atmospheric theme engine, while allowing 1-tap switching between ChordPlay themes and Classic BitChord.
+Replace the hard-coded monochrome Apple palette with a dynamic, curated atmospheric theme engine, while allowing 1-tap switching between PivMusic themes and Classic BitChord.
 
 ### 📂 Key Files to Modify & Create
 - `app/src/main/java/com/music/bitchord/data/settings/AppSettings.kt`
 - `app/src/main/java/com/music/bitchord/ui/theme/Theme.kt`
-- `app/src/main/java/com/music/bitchord/ui/theme/ChordPlayTheme.kt` (New)
+- `app/src/main/java/com/music/bitchord/ui/theme/PivMusicTheme.kt` (New)
 - `app/src/main/java/com/music/bitchord/ui/screens/settings/sections/AppearanceSection.kt`
 
 ### 🛠️ Detailed Specifications
@@ -45,11 +45,11 @@ Replace the hard-coded monochrome Apple palette with a dynamic, curated atmosphe
 Add the following persistent settings:
 ```kotlin
 val appDesignStyle = MutableStateFlow(AppDesignStyle.CHORDPLAY)
-val colorPalette = MutableStateFlow(ChordPlayPalette.ELECTRIC_VIOLET)
+val colorPalette = MutableStateFlow(PivMusicPalette.ELECTRIC_VIOLET)
 val appFontFamilyChoice = MutableStateFlow(AppFontChoice.SYSTEM_DEFAULT)
 ```
 
-Where `ChordPlayPalette` defines curated atmospheric themes:
+Where `PivMusicPalette` defines curated atmospheric themes:
 - **`ELECTRIC_VIOLET` (Signature Default)**:
   - Background: `#0B0C10` (Deep obsidian night)
   - Surface: `#141622` (Translucent navy-violet glass)
@@ -70,7 +70,7 @@ Where `ChordPlayPalette` defines curated atmospheric themes:
 #### 2. Composable Theme Wrapper in `Theme.kt`
 ```kotlin
 @Composable
-fun ChordPlayAppTheme(
+fun PivMusicAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
@@ -81,14 +81,14 @@ fun ChordPlayAppTheme(
         // Untouched legacy BitChord theme
         BitChordTheme(darkTheme = darkTheme, content = content)
     } else {
-        // ChordPlay Modern Theme with luminous surfaces and selected palette
-        ChordPlayMaterialTheme(darkTheme = darkTheme, palette = palette, content = content)
+        // PivMusic Modern Theme with luminous surfaces and selected palette
+        PivMusicMaterialTheme(darkTheme = darkTheme, palette = palette, content = content)
     }
 }
 ```
 
 #### 3. Appearance Settings UI in `AppearanceSection.kt`
-- **Style Selector Card**: Segmented control or preview cards choosing between **ChordPlay Modern** and **Classic BitChord**.
+- **Style Selector Card**: Segmented control or preview cards choosing between **PivMusic Modern** and **Classic BitChord**.
 - **Palette Picker**: A carousel of vibrant color circles with live checkmarks (Violet, Amber, Emerald, Cyber, Dynamic Monet).
 - **Live Preview Card**: Pinned at the top of the screen showing an animated mini-card that reflects the chosen theme, surface borders, and colors in real-time.
 
@@ -102,8 +102,8 @@ Turn the Now Playing screen from a plain Apple Music replica into an iconic, atm
 ### 📂 Key Files to Modify & Create
 - `sharedUi/src/jvmSharedMain/kotlin/com/music/bitchord/ui/player/NowPlayingScreen.kt`
 - `sharedUi/src/jvmSharedMain/kotlin/com/music/bitchord/ui/player/PlayerControls.kt`
-- `sharedUi/src/jvmSharedMain/kotlin/com/music/bitchord/ui/player/ChordPlayAmbientCover.kt` (New)
-- `sharedUi/src/jvmSharedMain/kotlin/com/music/bitchord/ui/player/ChordPlayTransportDeck.kt` (New)
+- `sharedUi/src/jvmSharedMain/kotlin/com/music/bitchord/ui/player/PivMusicAmbientCover.kt` (New)
+- `sharedUi/src/jvmSharedMain/kotlin/com/music/bitchord/ui/player/PivMusicTransportDeck.kt` (New)
 - `app/src/main/java/com/music/bitchord/data/settings/AppSettings.kt` (`playerLayoutMode`)
 
 ### 🛠️ Detailed Specifications
@@ -120,12 +120,12 @@ val playerLayoutMode = MutableStateFlow(PlayerLayoutMode.MODERN_AMBIENT)
 val enableBreathingAura = MutableStateFlow(true)
 ```
 
-#### 2. Breathing Artwork Aura (`ChordPlayAmbientCover.kt`)
+#### 2. Breathing Artwork Aura (`PivMusicAmbientCover.kt`)
 - An elevated squircle album cover (`RoundedCornerShape(24.dp)`).
 - Behind the artwork, render a softly blurred (`blur(40.dp)`), scaled (`1.08f`) duplicate of the artwork or canvas.
 - When playing, gently animate scale (`1.05f` to `1.10f`) and opacity with an infinite pulse tween (`3000ms`, `FastOutSlowInEasing`) to simulate a "breathing" audio aura. When paused, smoothly settle to `1.0f`.
 
-#### 3. Pill-Shaped Frosted Control Deck (`ChordPlayTransportDeck.kt`)
+#### 3. Pill-Shaped Frosted Control Deck (`PivMusicTransportDeck.kt`)
 - Instead of bare buttons floating on the page:
   - Encase Previous, Play/Pause, and Next in a floating frosted glass capsule (`Modifier.hazeChild(hazeState, shape = CircleShape)`).
   - Give the central Play/Pause button a luminous circular background (`Primary` color with soft drop shadow `shadow(12.dp, spotColor = primaryColor)`).
@@ -145,10 +145,10 @@ val playerMode by AppSettings.playerLayoutMode.collectAsStateWithLifecycle()
 
 if (designStyle == AppDesignStyle.CLASSIC_BITCHORD || playerMode == PlayerLayoutMode.CLASSIC_CLEAN) {
     // Untouched legacy BitChord player layout
-    LegacyBitChordPlayerContent(...)
+    LegacyBitPivMusicerContent(...)
 } else {
-    // ChordPlay Modern Elevated Player
-    ChordPlayModernPlayerContent(...)
+    // PivMusic Modern Elevated Player
+    PivMusicModernPlayerContent(...)
 }
 ```
 
@@ -173,7 +173,7 @@ Transform the Home screen from a static vertical list of horizontal shelves into
   - 12:00 – 16:59: *"Good afternoon, [User]"*
   - 17:00 – 21:59: *"Good evening, [User]"*
   - 22:00 – 04:59: *"Late Night Vibes"*
-- Display account name if logged into YouTube Music, or personalized `"ChordPlay"` listener title.
+- Display account name if logged into YouTube Music, or personalized `"PivMusic"` listener title.
 
 #### 2. Quick Mood & Vibe Chips (`MoodFilterChips.kt`)
 A horizontally scrollable pill row pinned under the header:
@@ -199,8 +199,8 @@ if (designStyle == AppDesignStyle.CLASSIC_BITCHORD) {
     // Untouched original BitChord shelves and header
     ClassicBitChordHomeContent(...)
 } else {
-    // ChordPlay Modern Home with Greeting, Mood Chips & Jump Back In
-    ChordPlayLivingHomeContent(...)
+    // PivMusic Modern Home with Greeting, Mood Chips & Jump Back In
+    PivMusicLivingHomeContent(...)
 }
 ```
 
@@ -243,24 +243,24 @@ You can hand the following prompts directly to subagents to execute each phase i
 
 ### Prompt for Agent (Phase 1: Theme Engine)
 ```text
-Task: Implement Phase 1 of the ChordPlay Evolution Plan (Theme Engine & Design System).
+Task: Implement Phase 1 of the PivMusic Evolution Plan (Theme Engine & Design System).
 Reference Specification: docs/CHORDPLAY_EVOLUTION_MASTER_PLAN.md (Phase 1).
 Instructions:
-1. In AppSettings.kt, add AppDesignStyle (CHORDPLAY vs CLASSIC_BITCHORD) and ChordPlayPalette enums.
-2. Create ChordPlayTheme.kt defining curated palettes: Electric Violet (default), Sunset Amber, Emerald Noir, and Dynamic Monet.
-3. Update Theme.kt to wrap BitChordTheme when CLASSIC_BITCHORD is selected, and ChordPlayTheme when CHORDPLAY is selected.
+1. In AppSettings.kt, add AppDesignStyle (CHORDPLAY vs CLASSIC_BITCHORD) and PivMusicPalette enums.
+2. Create PivMusicTheme.kt defining curated palettes: Electric Violet (default), Sunset Amber, Emerald Noir, and Dynamic Monet.
+3. Update Theme.kt to wrap BitChordTheme when CLASSIC_BITCHORD is selected, and PivMusicTheme when CHORDPLAY is selected.
 4. Update AppearanceSection.kt to add a Style Switcher card and Palette Carousel with real-time live preview.
 5. Ensure zero compilation errors and test with gradle :app:assembleDevDebug.
 ```
 
 ### Prompt for Agent (Phase 2: Player Screen Elevation)
 ```text
-Task: Implement Phase 2 of the ChordPlay Evolution Plan (Player Screen Elevation).
+Task: Implement Phase 2 of the PivMusic Evolution Plan (Player Screen Elevation).
 Reference Specification: docs/CHORDPLAY_EVOLUTION_MASTER_PLAN.md (Phase 2).
 Instructions:
 1. In AppSettings.kt, add PlayerLayoutMode (MODERN_AMBIENT vs CLASSIC_CLEAN).
-2. Create ChordPlayAmbientCover.kt implementing the breathing artwork aura with smooth pulse animations during playback.
-3. Create ChordPlayTransportDeck.kt implementing the frosted-glass capsule control deck with elevated play/pause button.
+2. Create PivMusicAmbientCover.kt implementing the breathing artwork aura with smooth pulse animations during playback.
+3. Create PivMusicTransportDeck.kt implementing the frosted-glass capsule control deck with elevated play/pause button.
 4. Add quick action row on player (audio fidelity badge and 1-tap Add to Playlist button).
 5. Ensure that if AppDesignStyle == CLASSIC_BITCHORD or PlayerLayoutMode == CLASSIC_CLEAN, the original BitChord player is rendered untouched.
 6. Verify build with :app:assembleDevDebug.
@@ -268,7 +268,7 @@ Instructions:
 
 ### Prompt for Agent (Phase 3: The Living Home Screen)
 ```text
-Task: Implement Phase 3 of the ChordPlay Evolution Plan (The Living Home Screen).
+Task: Implement Phase 3 of the PivMusic Evolution Plan (The Living Home Screen).
 Reference Specification: docs/CHORDPLAY_EVOLUTION_MASTER_PLAN.md (Phase 3).
 Instructions:
 1. In HomeScreen.kt, implement dynamic time-of-day greeting ("Good morning / afternoon / evening / Late Night Vibes").
@@ -281,7 +281,7 @@ Instructions:
 
 ### Prompt for Agent (Phase 4: MiniPlayer & Interaction Polish)
 ```text
-Task: Implement Phase 4 of the ChordPlay Evolution Plan (MiniPlayer & Interaction Superpowers).
+Task: Implement Phase 4 of the PivMusic Evolution Plan (MiniPlayer & Interaction Superpowers).
 Reference Specification: docs/CHORDPLAY_EVOLUTION_MASTER_PLAN.md (Phase 4).
 Instructions:
 1. In MiniPlayer.kt, implement horizontal swipe-to-skip gestures (drag left for next, drag right for previous) with spring animations.

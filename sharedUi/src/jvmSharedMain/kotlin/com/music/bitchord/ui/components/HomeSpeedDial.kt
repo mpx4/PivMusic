@@ -114,7 +114,7 @@ fun SpeedDialSectionHeader(
 }
 
 /**
- * Adaptive Speed Dial Grid for ChordPlay Living Home Screen.
+ * Adaptive Speed Dial Grid for PivMusic Living Home Screen.
  *
  * Supports 3 layout modes:
  * - TWO_BY_THREE: 2-column by 3-row grid per page (Slot 5 on Page 1 is Lucky/Roll a Dice card)

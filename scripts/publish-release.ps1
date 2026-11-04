@@ -12,8 +12,8 @@ if (-not $token) {
     exit 1
 }
 
-$repoOwner = "code4nigel"
-$repoName = "ChordPlay"
+$repoOwner = "mpx4"
+$repoName = "PivMusic"
 $notesPath = Join-Path $PSScriptRoot "..\app\version\RELEASE_NOTES.md"
 $fullNotes = if (Test-Path $notesPath) { [System.IO.File]::ReadAllText($notesPath) } else { "ChordPlay $tagName release" }
 $releaseNotes = if ($fullNotes -match '(?s)(# ChordPlay v1\.8\.8.*?)(?=\r?\n---\r?\n# ChordPlay|\Z)') {

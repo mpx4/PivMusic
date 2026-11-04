@@ -49,13 +49,13 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Open, airy, and immersive transport controls for ChordPlay Modern mode.
+ * Open, airy, and immersive transport controls for PivMusic Modern mode.
  * The buttons float unconstrained directly over the atmospheric background with
  * generous breathing room and an organic, luminous Play/Pause halo aura.
  */
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
-fun ChordPlayTransportDeck(
+fun PivMusicTransportDeck(
     isPlaying: Boolean,
     isLoading: Boolean,
     previousEnabled: Boolean,
@@ -212,7 +212,7 @@ fun ChordPlayTransportDeck(
  * between the start and end timestamps. Clicking it triggers the audio pipeline sheet.
  */
 @Composable
-fun ChordPlayAudioFidelityBadge(
+fun PivMusicAudioFidelityBadge(
     song: Song,
     isLoading: Boolean,
     onClick: () -> Unit,

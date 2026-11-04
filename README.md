@@ -9,8 +9,8 @@
 <br/>
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat-square)](LICENSE)
-[![Latest Release](https://img.shields.io/github/v/release/code4nigel/ChordPlay?style=flat-square&label=Release&color=7C4DFF)](https://github.com/code4nigel/ChordPlay/releases)
-[![Platform](https://img.shields.io/badge/Platform-Android-3DDC84.svg?style=flat-square)](https://github.com/code4nigel/ChordPlay/releases)
+[![Latest Release](https://img.shields.io/github/v/release/mpx4/PivMusic?style=flat-square&label=Release&color=7C4DFF)](https://github.com/mpx4/PivMusic/releases)
+[![Platform](https://img.shields.io/badge/Platform-Android-3DDC84.svg?style=flat-square)](https://github.com/mpx4/PivMusic/releases)
 [![Kotlin Multiplatform](https://img.shields.io/badge/Architecture-Kotlin%20Compose-7F52FF.svg?style=flat-square)](https://kotlinlang.org/)
 
 <br/>
@@ -117,7 +117,7 @@ ChordPlay is built on the **ChordPlay Design System**, adhering to strict aesthe
 
 ## Downloads
 
-Download the latest pre-compiled APK from the [Releases](https://github.com/code4nigel/ChordPlay/releases) page:
+Download the latest pre-compiled APK from the [Releases](https://github.com/mpx4/PivMusic/releases) page:
 
 | Package | Architecture | Description |
 | :--- | :--- | :--- |

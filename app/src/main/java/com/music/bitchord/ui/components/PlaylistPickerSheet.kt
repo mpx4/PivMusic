@@ -419,7 +419,7 @@ fun PlaylistPickerSheet(
                             playlist = playlist,
                             selected = isTicked,
                             wasInitiallyThere = wasPresent,
-                            isChordPlayPlaylist = isChordplay,
+                            isPivMusicPlaylist = isChordplay,
                             isPinned = isPinned,
                             onClick = {
                                 userToggledPlaylists.add(playlist.playlistId)
@@ -480,7 +480,7 @@ private fun PlaylistRow(
     playlist: UserPlaylist,
     selected: Boolean,
     wasInitiallyThere: Boolean,
-    isChordPlayPlaylist: Boolean = false,
+    isPivMusicPlaylist: Boolean = false,
     isPinned: Boolean = false,
     onClick: () -> Unit,
 ) {
@@ -539,7 +539,7 @@ private fun PlaylistRow(
                         }
                     }
                 }
-                if (isChordPlayPlaylist) {
+                if (isPivMusicPlaylist) {
                     Spacer(Modifier.width(6.dp))
                     Box(
                         modifier = Modifier
@@ -548,7 +548,7 @@ private fun PlaylistRow(
                             .padding(horizontal = 6.dp, vertical = 2.dp),
                     ) {
                         Text(
-                            text = "ChordPlay",
+                            text = "PivMusic",
                             style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,

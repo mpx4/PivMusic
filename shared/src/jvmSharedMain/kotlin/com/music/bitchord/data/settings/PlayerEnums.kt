@@ -34,9 +34,9 @@ enum class LastPlayerScreen {
     QUEUE,
 }
 
-/** Global design style aesthetic: ChordPlay Modern vs original BitChord monochrome. */
+/** Global design style aesthetic: PivMusic Modern vs original BitChord monochrome. */
 enum class AppDesignStyle(val label: String, val detail: String) {
-    CHORDPLAY("ChordPlay Modern", "Atmospheric glowing glass, vibrant palettes, tactile controls, and dynamic discovery"),
+    CHORDPLAY("PivMusic Modern", "Atmospheric glowing glass, vibrant palettes, tactile controls, and dynamic discovery"),
     CLASSIC_BITCHORD("Classic BitChord", "Original Apple Music-inspired monochrome dark UI, standard player, and default shelves"),
 }
 

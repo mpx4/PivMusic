@@ -22,6 +22,7 @@ import com.music.bitchord.data.spotify.SpotifyLibrary
 import com.music.bitchord.data.spotify.SpotifyTrack
 import com.music.bitchord.data.lyrics.EmbeddedLyrics
 import com.music.bitchord.data.lyrics.LyricLine
+import com.music.bitchord.data.lyrics.LocalLyricsStore
 import com.music.bitchord.data.lyrics.LyricsRepository
 import com.music.bitchord.data.lyrics.LyricsSource
 import com.music.bitchord.data.settings.AppSettings
@@ -102,6 +103,7 @@ import java.util.concurrent.atomic.AtomicLong
 class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     private val authStore = AuthStore(app)
+    private val localLyricsStore = LocalLyricsStore(app)
 
     private val _signedIn = MutableStateFlow(authStore.isSignedIn)
     val signedIn: StateFlow<Boolean> = _signedIn.asStateFlow()
@@ -314,6 +316,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val artist: String,
         val durationMs: Long,
         val album: String?,
+        val localUri: String?,
     )
 
     private var currentLyricsRequest: LyricsRequest? = null
@@ -327,6 +330,20 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
      * different one.
      */
     private var lyricsFor: Pair<String, Set<LyricsSource>>? = null
+
+    /** Re-read the current track after an in-place local edit. */
+    fun refreshCurrentLyrics() {
+        val request = currentLyricsRequest ?: return
+        lyricsFor = null
+        loadLyrics(
+            videoId = request.videoId,
+            title = request.title,
+            artist = request.artist,
+            durationMs = request.durationMs,
+            album = request.album,
+            localUri = request.localUri,
+        )
+    }
 
     /**
      * Called as the playing track changes; cheap no-op when already loaded.
@@ -360,11 +377,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         // dropped as a duplicate, and leave the track marked as being looked up
         // by nobody — which is what left a paused track loading for ever, since
         // pausing is when the duration is most likely to arrive a frame late.
-        if (localUri == null && durationMs <= 0L) return
         lyricsFor = key
         lyricsGeneration += 1
         val generation = lyricsGeneration
-        currentLyricsRequest = LyricsRequest(videoId, title, artist, durationMs, album)
+        currentLyricsRequest = LyricsRequest(videoId, title, artist, durationMs, album, localUri)
         selectedLyricsSource = null
         manualLyricsJobs.values.forEach(Job::cancel)
         manualLyricsJobs.clear()
@@ -374,15 +390,16 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _lyrics.value = null
         _lyricsSource.value = null
         lyricsJob?.cancel()
-        if (sources.isEmpty()) {
-            // Switched off, or every source unticked. Nothing to look up, and
-            // nothing to say about it — the player drops the lyric strip
-            // rather than reporting a track with no lyrics.
-            _lyricsChecked.value = true
-            return
-        }
         _lyricsChecked.value = false
         lyricsJob = viewModelScope.launch {
+            // User edits are authoritative and available even when providers
+            // are disabled or the device is offline.
+            localLyricsStore.lyrics(videoId)?.let { local ->
+                _lyrics.value = local
+                _lyricsSource.value = null
+                _lyricsChecked.value = true
+                return@launch
+            }
             // The file first, and without the duration gate below: a length is
             // only needed to *match* a track against a stranger's database, and
             // nothing is being matched here — these lyrics were written into
@@ -400,6 +417,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             if (durationMs <= 0L) {
                 // Duration arrives a beat after the track does; wait for it.
                 lyricsFor = null
+                return@launch
+            }
+            if (sources.isEmpty()) {
+                _lyricsChecked.value = true
                 return@launch
             }
             val found = LyricsRepository.lyrics(

@@ -79,6 +79,19 @@ interface PlayerHost {
         targetLanguageTag: String,
     ): LyricsTranslationResult
 
+    /** User-authored offline lyric data; desktop keeps the compatibility no-op. */
+    suspend fun localLyrics(trackId: String): List<LyricLine>? = null
+    suspend fun localTranslation(trackId: String, targetLanguageTag: String): List<LyricLine>? = null
+    val localLyricsEditingAvailable: Boolean get() = false
+    /** Increments after a local edit so the open player can refresh in place. */
+    val localLyricsRevision: StateFlow<Long> get() = MutableStateFlow(0L)
+    suspend fun saveLocalLyrics(
+        trackId: String,
+        lines: List<LyricLine>,
+        translation: List<LyricLine>?,
+        targetLanguageTag: String?,
+    ) = Unit
+
     suspend fun romanizeLyrics(
         trackId: String,
         lines: List<LyricLine>,

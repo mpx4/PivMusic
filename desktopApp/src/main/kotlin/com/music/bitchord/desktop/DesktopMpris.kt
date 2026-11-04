@@ -200,7 +200,7 @@ internal class DesktopMprisController(
             "CanQuit" to variant(false),
             "CanRaise" to variant(false),
             "HasTrackList" to variant(false),
-            "Identity" to variant("ChordPlay"),
+            "Identity" to variant("PivMusic"),
             "DesktopEntry" to variant("chordplay"),
             "SupportedUriSchemes" to variant(listOf("file", "http", "https"), "as"),
             "SupportedMimeTypes" to variant(

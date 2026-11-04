@@ -115,6 +115,7 @@ object LyricsTranslation {
 
     private data class TextSlot(
         val lineIndex: Int,
+        val timeMs: Long,
         val background: Boolean,
         val text: String,
         val sectionHeader: Boolean,
@@ -293,6 +294,7 @@ object LyricsTranslation {
                 add(
                     TextSlot(
                         lineIndex = index,
+                        timeMs = line.timeMs,
                         background = false,
                         text = if (header) line.text.removePrefix("[").removeSuffix("]").trim() else line.text,
                         sectionHeader = header,
@@ -300,7 +302,7 @@ object LyricsTranslation {
                 )
             }
             line.background?.takeIf { it.text.isNotBlank() }?.let { background ->
-                add(TextSlot(index, background = true, background.text, sectionHeader = false))
+                add(TextSlot(index, line.timeMs, background = true, background.text, sectionHeader = false))
             }
         }
     }
@@ -511,9 +513,12 @@ object LyricsTranslation {
         slots: List<TextSlot>,
         translated: List<String>,
     ): List<LyricLine> {
-        val byLine = slots.zip(translated).groupBy { it.first.lineIndex }
-        return original.mapIndexed { index, line ->
-            val entries = byLine[index].orEmpty()
+        // A provider can insert/remove/reorder rows while preserving the
+        // source timestamps. Match by timestamp, never by the transient list
+        // index used while batching requests.
+        val byTimestamp = slots.zip(translated).groupBy { it.first.timeMs }
+        return original.map { line ->
+            val entries = byTimestamp[line.timeMs].orEmpty()
             val lead = entries.firstOrNull { !it.first.background }
             val backing = entries.firstOrNull { it.first.background }
             val leadText = lead?.let { (slot, text) -> if (slot.sectionHeader) "[$text]" else text }

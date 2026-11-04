@@ -32,7 +32,7 @@ import com.music.bitchord.data.model.HomeShelf
 import java.util.Locale
 
 /**
- * Quick mood filter categories for ChordPlay Living Home Screen.
+ * Quick mood filter categories for PivMusic Living Home Screen.
  * Pure text labels without emojis for a clean, professional aesthetic.
  */
 enum class HomeMood(

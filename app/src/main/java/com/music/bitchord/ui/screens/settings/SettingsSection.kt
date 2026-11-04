@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.music.bitchord.R
 
 /**
- * The modular categories of ChordPlay's Prism-inspired settings hierarchy.
+ * The modular categories of PivMusic's Prism-inspired settings hierarchy.
  */
 enum class SettingsSection(
     val titleRes: Int,

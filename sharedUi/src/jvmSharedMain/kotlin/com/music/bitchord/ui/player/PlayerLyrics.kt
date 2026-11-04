@@ -48,12 +48,18 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FormatSize
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -124,6 +130,8 @@ import com.music.bitchord.data.lyrics.isGeniusSectionHeader
 import com.music.bitchord.data.lyrics.GrowingWord
 import com.music.bitchord.data.lyrics.LyricAlignment
 import com.music.bitchord.data.lyrics.LyricLine
+import com.music.bitchord.data.lyrics.LrcLib
+import com.music.bitchord.data.lyrics.toLrc
 import com.music.bitchord.data.lyrics.LyricsSource
 import com.music.bitchord.data.lyrics.translationLanguageName
 import com.music.bitchord.ui.haptics.Haptic
@@ -432,12 +440,12 @@ private const val LYRICS_UNAVAILABLE_HOLD_MS = 5_000L
 private const val LYRICS_UNAVAILABLE_FADE_MS = 900
 internal sealed interface LyricsTranslationUiState {
     data object Idle : LyricsTranslationUiState
-    data object Loading : LyricsTranslationUiState
-    data class Ready(val lines: List<LyricLine>) : LyricsTranslationUiState
+    data class Loading(val fallback: List<LyricLine>? = null) : LyricsTranslationUiState
+    data class Ready(val lines: List<LyricLine>, val online: Boolean = true) : LyricsTranslationUiState
     data object SameLanguage : LyricsTranslationUiState
 }
 
-internal enum class LyricsDisplayMode { Original, Romanized, Translated }
+internal enum class LyricsDisplayMode { Original, Romanized, LocalTranslation, Translated }
 
 private const val TRANSLATION_MOTION_MS = 540
 private const val PARTICLES_PER_VOICE = 18
@@ -1734,6 +1742,8 @@ internal fun LyricsPanel(
         onReveal = { if (!picking) onRevealControls() },
         onHide = onHideControls,
     )
+    var editLyricsOpen by remember(trackKey) { mutableStateOf(false) }
+    val editorScope = rememberCoroutineScope()
 
     val currentLine by rememberUpdatedState(focusLine)
     val activeOnScreen by remember(listState) {
@@ -1860,6 +1870,22 @@ internal fun LyricsPanel(
         ),
         verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
+        item(key = "local-lyrics-edit") {
+            if (PlayerPlatform.host.localLyricsEditingAvailable) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = GLOW_ROOM),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    IconButton(onClick = { editLyricsOpen = true }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Edit,
+                            contentDescription = stringResource(Res.string.edit_lyrics),
+                            tint = Color.White.copy(alpha = 0.82f),
+                        )
+                    }
+                }
+            }
+        }
         itemsIndexed(lines) { index, line ->
             if (!isSynced && isGeniusSectionHeader(line.text)) {
                 val sectionTitle = line.text.removePrefix("[").removeSuffix("]").trim()
@@ -2323,6 +2349,105 @@ internal fun LyricsPanel(
             }
         }
     }
+    val editorAppTag = appLanguageTag()
+    val editorPreferredLanguage = PlayerSettings.translationLanguage.value
+    val editorTargetLanguage = remember(editorAppTag, editorPreferredLanguage) {
+        editorPreferredLanguage.ifBlank {
+            if (LocaleTags.isChineseTag(editorAppTag)) {
+                LocaleTags.translationWireTarget(editorAppTag)
+            } else {
+                Locale.forLanguageTag(editorAppTag).language.ifBlank { "en" }
+            }
+        }
+    }
+    var editorTranslation by remember(trackKey, editorTargetLanguage, editLyricsOpen) {
+        mutableStateOf<List<LyricLine>?>(null)
+    }
+    LaunchedEffect(editLyricsOpen, trackKey, editorTargetLanguage, lines) {
+        if (editLyricsOpen) {
+            editorTranslation = PlayerPlatform.host.localTranslation(trackKey, editorTargetLanguage)
+        }
+    }
+    if (editLyricsOpen) {
+        LocalLyricsEditorDialog(
+            trackId = trackKey,
+            initialLines = lines,
+            initialTranslation = editorTranslation,
+            onDismiss = { editLyricsOpen = false },
+            onSave = { edited, translation ->
+                editorScope.launch {
+                    PlayerPlatform.host.saveLocalLyrics(
+                        trackId = trackKey,
+                        lines = edited,
+                        translation = translation,
+                        targetLanguageTag = editorTargetLanguage,
+                    )
+                    editLyricsOpen = false
+                    PlayerPlatform.host.showMessage("Lyrics saved offline")
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun LocalLyricsEditorDialog(
+    trackId: String,
+    initialLines: List<LyricLine>,
+    initialTranslation: List<LyricLine>?,
+    onDismiss: () -> Unit,
+    onSave: (List<LyricLine>, List<LyricLine>?) -> Unit,
+) {
+    var lrcText by remember(trackId, initialLines) { mutableStateOf(initialLines.toLrc()) }
+    var translationText by remember(trackId, initialLines, initialTranslation) {
+        val byTimestamp = initialTranslation.orEmpty().groupBy { it.timeMs }
+        mutableStateOf(
+            initialLines.joinToString("\n") { line ->
+                byTimestamp[line.timeMs].orEmpty().firstOrNull()?.text.orEmpty()
+            },
+        )
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.edit_lyrics)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                TextField(
+                    value = lrcText,
+                    onValueChange = { lrcText = it },
+                    label = { Text(stringResource(Res.string.lyrics_lrc_text)) },
+                    minLines = 5,
+                    maxLines = 10,
+                )
+                TextField(
+                    value = translationText,
+                    onValueChange = { translationText = it },
+                    label = { Text(stringResource(Res.string.lyrics_translation_lines)) },
+                    minLines = 5,
+                    maxLines = 10,
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                val edited = LrcLib.parseLrc(lrcText)
+                val values = translationText.lineSequence().toList()
+                // Keep the editor's rows attached to the original timestamp.
+                // This means a reordered/inserted LRC line cannot inherit a
+                // neighbouring translation merely because its list index moved.
+                val valueByTimestamp = initialLines.mapIndexedNotNull { index, line ->
+                    values.getOrNull(index)?.trim()?.let { line.timeMs to it }
+                }.toMap()
+                val translated = edited.mapNotNull { line ->
+                    valueByTimestamp[line.timeMs]
+                        ?.takeIf(String::isNotEmpty)
+                        ?.let { LyricLine(line.timeMs, it) }
+                }
+                onSave(edited, translated)
+            }) { Text("Save") }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(Res.string.cancel)) } },
+    )
 }
 
 /**
@@ -2807,13 +2932,20 @@ internal fun rememberLyricsTranslation(
     var translationState by remember(trackId, translationLanguage, lyrics) {
         mutableStateOf<LyricsTranslationUiState>(LyricsTranslationUiState.Idle)
     }
+    var localTranslation by remember(trackId, translationLanguage, lyrics) {
+        mutableStateOf<List<LyricLine>?>(null)
+    }
+    var onlineTranslation by remember(trackId, translationLanguage, lyrics) {
+        mutableStateOf<List<LyricLine>?>(null)
+    }
     var romanizationState by remember(trackId, translationLanguage, lyrics) {
         mutableStateOf<LyricsTranslationUiState>(LyricsTranslationUiState.Idle)
     }
     var lyricsDisplayMode by remember(trackId, translationLanguage, lyrics) {
         mutableStateOf(LyricsDisplayMode.Original)
     }
-    val showingTranslation = lyricsDisplayMode == LyricsDisplayMode.Translated
+    val showingTranslation = lyricsDisplayMode == LyricsDisplayMode.Translated ||
+        lyricsDisplayMode == LyricsDisplayMode.LocalTranslation
     val showingRomanization = lyricsDisplayMode == LyricsDisplayMode.Romanized
     var translationTransition by remember(trackId) { mutableIntStateOf(0) }
     var translationJob by remember(trackId, translationLanguage, lyrics) {
@@ -2830,7 +2962,8 @@ internal fun rememberLyricsTranslation(
     }
     val displayedLyrics = when (lyricsDisplayMode) {
         LyricsDisplayMode.Translated ->
-            (translationState as? LyricsTranslationUiState.Ready)?.lines ?: lyrics.orEmpty()
+            onlineTranslation ?: localTranslation ?: lyrics.orEmpty()
+        LyricsDisplayMode.LocalTranslation -> localTranslation ?: lyrics.orEmpty()
         LyricsDisplayMode.Romanized ->
             (romanizationState as? LyricsTranslationUiState.Ready)?.lines ?: lyrics.orEmpty()
         LyricsDisplayMode.Original -> lyrics.orEmpty()
@@ -2840,7 +2973,8 @@ internal fun rememberLyricsTranslation(
     // one-line strip over the scrubber swaps to [displayedLyrics]. One mode at
     // a time by construction — [lyricsDisplayMode] holds a single value.
     val lyricsSubLines = when (lyricsDisplayMode) {
-        LyricsDisplayMode.Translated -> (translationState as? LyricsTranslationUiState.Ready)?.lines
+        LyricsDisplayMode.Translated -> onlineTranslation ?: localTranslation
+        LyricsDisplayMode.LocalTranslation -> localTranslation
         LyricsDisplayMode.Romanized -> (romanizationState as? LyricsTranslationUiState.Ready)?.lines
         LyricsDisplayMode.Original -> null
     }
@@ -2849,14 +2983,31 @@ internal fun rememberLyricsTranslation(
         when (val state = translationState) {
             is LyricsTranslationUiState.Ready -> {
                 lyricsDisplayMode = if (showingTranslation) {
-                    LyricsDisplayMode.Original
+                    if (localTranslation != null && state.online) LyricsDisplayMode.LocalTranslation
+                    else LyricsDisplayMode.Original
                 } else {
-                    LyricsDisplayMode.Translated
+                    if (onlineTranslation != null) LyricsDisplayMode.Translated
+                    else if (localTranslation != null) LyricsDisplayMode.LocalTranslation
+                    else LyricsDisplayMode.Original
                 }
                 translationTransition++
                 haptics.play(Haptic.Select)
             }
-            LyricsTranslationUiState.Loading -> Unit
+            is LyricsTranslationUiState.Loading -> {
+                if (showingTranslation) {
+                    translationJob?.cancel()
+                    lyricsDisplayMode = if (localTranslation != null) {
+                        LyricsDisplayMode.LocalTranslation
+                    } else {
+                        LyricsDisplayMode.Original
+                    }
+                    translationState = localTranslation?.let {
+                        LyricsTranslationUiState.Ready(it, online = false)
+                    } ?: LyricsTranslationUiState.Idle
+                    translationTransition++
+                    haptics.play(Haptic.Select)
+                }
+            }
             LyricsTranslationUiState.SameLanguage -> {
                 haptics.play(Haptic.Tap)
                 PlayerPlatform.host.showMessage(alreadyInLanguageMessage)
@@ -2865,13 +3016,28 @@ internal fun rememberLyricsTranslation(
                 val source = lyrics.orEmpty()
                 if (source.isEmpty()) return@toggleTranslation
                 haptics.play(Haptic.Tap)
-                translationState = LyricsTranslationUiState.Loading
+                if (onlineTranslation != null) {
+                    translationState = LyricsTranslationUiState.Ready(onlineTranslation!!, online = true)
+                    lyricsDisplayMode = LyricsDisplayMode.Translated
+                    translationTransition++
+                    haptics.play(Haptic.ToggleOn)
+                    return@toggleTranslation
+                }
+                translationState = LyricsTranslationUiState.Loading()
                 romanizationJob?.cancel()
                 if (romanizationState is LyricsTranslationUiState.Loading) {
                     romanizationState = LyricsTranslationUiState.Idle
                 }
                 translationJob?.cancel()
                 translationJob = translationScope.launch {
+                    localTranslation = PlayerPlatform.host.localTranslation(trackId, translationLanguage)
+                    translationState = LyricsTranslationUiState.Loading(localTranslation)
+                    lyricsDisplayMode = if (localTranslation != null) {
+                        LyricsDisplayMode.LocalTranslation
+                    } else {
+                        LyricsDisplayMode.Translated
+                    }
+                    translationTransition++
                     when (
                         val result = PlayerPlatform.host.translateLyrics(
                             trackId = trackId,
@@ -2880,7 +3046,10 @@ internal fun rememberLyricsTranslation(
                         )
                     ) {
                         is LyricsTranslationResult.Translated -> {
-                            translationState = LyricsTranslationUiState.Ready(result.lines)
+                            // Keep the online result separate so it can be
+                            // hidden temporarily without overwriting local edits.
+                            onlineTranslation = result.lines
+                            translationState = LyricsTranslationUiState.Ready(result.lines, online = true)
                             lyricsDisplayMode = LyricsDisplayMode.Translated
                             translationTransition++
                             haptics.play(Haptic.ToggleOn)
@@ -2890,7 +3059,14 @@ internal fun rememberLyricsTranslation(
                             PlayerPlatform.host.showMessage(alreadyInLanguageMessage)
                         }
                         LyricsTranslationResult.Unavailable -> {
-                            translationState = LyricsTranslationUiState.Idle
+                            translationState = localTranslation?.let {
+                                LyricsTranslationUiState.Ready(it, online = false)
+                            } ?: LyricsTranslationUiState.Idle
+                            lyricsDisplayMode = if (localTranslation != null) {
+                                LyricsDisplayMode.LocalTranslation
+                            } else {
+                                LyricsDisplayMode.Original
+                            }
                             PlayerPlatform.host.showMessage(translationUnavailableMessage)
                         }
                     }
@@ -2909,7 +3085,7 @@ internal fun rememberLyricsTranslation(
                 translationTransition++
                 haptics.play(Haptic.Select)
             }
-            LyricsTranslationUiState.Loading -> Unit
+            is LyricsTranslationUiState.Loading -> Unit
             LyricsTranslationUiState.SameLanguage -> {
                 haptics.play(Haptic.Tap)
                 PlayerPlatform.host.showMessage(alreadyRomanizedMessage)
@@ -2918,7 +3094,7 @@ internal fun rememberLyricsTranslation(
                 val source = lyrics.orEmpty()
                 if (source.isEmpty()) return@toggleRomanization
                 haptics.play(Haptic.Tap)
-                romanizationState = LyricsTranslationUiState.Loading
+                romanizationState = LyricsTranslationUiState.Loading()
                 translationJob?.cancel()
                 if (translationState is LyricsTranslationUiState.Loading) {
                     translationState = LyricsTranslationUiState.Idle

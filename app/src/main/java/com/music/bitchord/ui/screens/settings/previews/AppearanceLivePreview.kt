@@ -43,11 +43,11 @@ import coil3.compose.AsyncImage
 import com.music.bitchord.R
 import com.music.bitchord.data.settings.AppDesignStyle
 import com.music.bitchord.data.settings.AppSettings
-import com.music.bitchord.data.settings.ChordPlayPalette
+import com.music.bitchord.data.settings.PivMusicPalette
 import com.music.bitchord.data.settings.ThemeMode
 
 /**
- * Authentic 1:1 live dashboard preview showing how theme mode, ChordPlay color palette,
+ * Authentic 1:1 live dashboard preview showing how theme mode, PivMusic color palette,
  * glass effects, and blur interact on the actual home screen components.
  */
 @Composable
@@ -67,12 +67,12 @@ fun AppearanceLivePreview(
     }
 
     val isLight = theme == ThemeMode.LIGHT
-    val isChordPlay = designStyle == AppDesignStyle.CHORDPLAY
+    val isPivMusic = designStyle == AppDesignStyle.CHORDPLAY
 
     val activePrimary = if (activeCustomPalette != null) {
         Color(activeCustomPalette.primaryHex)
-    } else if (isChordPlay) {
-        if (palette == ChordPlayPalette.DYNAMIC_MONET) {
+    } else if (isPivMusic) {
+        if (palette == PivMusicPalette.DYNAMIC_MONET) {
             MaterialTheme.colorScheme.primary
         } else {
             Color(palette.primaryColorHex)
@@ -83,8 +83,8 @@ fun AppearanceLivePreview(
 
     val activeSecondary = if (activeCustomPalette != null) {
         Color(activeCustomPalette.secondaryHex)
-    } else if (isChordPlay) {
-        if (palette == ChordPlayPalette.DYNAMIC_MONET) {
+    } else if (isPivMusic) {
+        if (palette == PivMusicPalette.DYNAMIC_MONET) {
             MaterialTheme.colorScheme.secondary
         } else {
             Color(palette.secondaryColorHex)
@@ -94,11 +94,11 @@ fun AppearanceLivePreview(
     }
 
     val targetBg = when {
-        !isChordPlay -> if (isLight) MaterialTheme.colorScheme.surface else Color(0xFF0F1012)
+        !isPivMusic -> if (isLight) MaterialTheme.colorScheme.surface else Color(0xFF0F1012)
         activeCustomPalette != null -> {
             Color(activeCustomPalette.surfaceHex).copy(alpha = if (reduceDynamicBlur) 1f else 0.90f)
         }
-        palette == ChordPlayPalette.DYNAMIC_MONET -> {
+        palette == PivMusicPalette.DYNAMIC_MONET -> {
             if (reduceDynamicBlur) {
                 MaterialTheme.colorScheme.surfaceVariant
             } else {
@@ -108,22 +108,22 @@ fun AppearanceLivePreview(
         isLight && reduceDynamicBlur -> Color(0xFFF0F2F6)
         isLight -> Color(0xFFF7F8FA).copy(alpha = 0.95f)
         reduceDynamicBlur -> when (palette) {
-            ChordPlayPalette.CHORDPLAY_CRIMSON -> Color(0xFF160D12)
-            ChordPlayPalette.ELECTRIC_VIOLET -> Color(0xFF141622)
-            ChordPlayPalette.SUNSET_AMBER -> Color(0xFF1A1410)
-            ChordPlayPalette.EMERALD_NOIR -> Color(0xFF0F1D16)
-            ChordPlayPalette.MONOCHROME -> Color(0xFF121214)
-            ChordPlayPalette.DYNAMIC_ARTWORK -> MaterialTheme.colorScheme.surface
-            ChordPlayPalette.DYNAMIC_MONET -> MaterialTheme.colorScheme.surfaceVariant
+            PivMusicPalette.CHORDPLAY_CRIMSON -> Color(0xFF160D12)
+            PivMusicPalette.ELECTRIC_VIOLET -> Color(0xFF141622)
+            PivMusicPalette.SUNSET_AMBER -> Color(0xFF1A1410)
+            PivMusicPalette.EMERALD_NOIR -> Color(0xFF0F1D16)
+            PivMusicPalette.MONOCHROME -> Color(0xFF121214)
+            PivMusicPalette.DYNAMIC_ARTWORK -> MaterialTheme.colorScheme.surface
+            PivMusicPalette.DYNAMIC_MONET -> MaterialTheme.colorScheme.surfaceVariant
         }
         else -> when (palette) {
-            ChordPlayPalette.CHORDPLAY_CRIMSON -> Color(0xFF160D12).copy(alpha = 0.90f)
-            ChordPlayPalette.ELECTRIC_VIOLET -> Color(0xFF141622).copy(alpha = 0.90f)
-            ChordPlayPalette.SUNSET_AMBER -> Color(0xFF1A1410).copy(alpha = 0.90f)
-            ChordPlayPalette.EMERALD_NOIR -> Color(0xFF0F1D16).copy(alpha = 0.90f)
-            ChordPlayPalette.MONOCHROME -> Color(0xFF121214).copy(alpha = 0.90f)
-            ChordPlayPalette.DYNAMIC_ARTWORK -> MaterialTheme.colorScheme.surface.copy(alpha = 0.90f)
-            ChordPlayPalette.DYNAMIC_MONET -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.90f)
+            PivMusicPalette.CHORDPLAY_CRIMSON -> Color(0xFF160D12).copy(alpha = 0.90f)
+            PivMusicPalette.ELECTRIC_VIOLET -> Color(0xFF141622).copy(alpha = 0.90f)
+            PivMusicPalette.SUNSET_AMBER -> Color(0xFF1A1410).copy(alpha = 0.90f)
+            PivMusicPalette.EMERALD_NOIR -> Color(0xFF0F1D16).copy(alpha = 0.90f)
+            PivMusicPalette.MONOCHROME -> Color(0xFF121214).copy(alpha = 0.90f)
+            PivMusicPalette.DYNAMIC_ARTWORK -> MaterialTheme.colorScheme.surface.copy(alpha = 0.90f)
+            PivMusicPalette.DYNAMIC_MONET -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.90f)
         }
     }
 
@@ -134,13 +134,13 @@ fun AppearanceLivePreview(
     val subtextColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     val borderColor = when {
-        !isChordPlay -> if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.30f) else Color(0xFF2C2C2E)
+        !isPivMusic -> if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.30f) else Color(0xFF2C2C2E)
         liquidGlass -> animatedPrimary.copy(alpha = 0.45f)
         isLight -> MaterialTheme.colorScheme.outline.copy(alpha = 0.22f)
         else -> animatedPrimary.copy(alpha = 0.25f)
     }
 
-    val cardCornerRadius = if (isChordPlay) 24.dp else 16.dp
+    val cardCornerRadius = if (isPivMusic) 24.dp else 16.dp
 
     Box(
         modifier = modifier
@@ -153,7 +153,7 @@ fun AppearanceLivePreview(
             .padding(16.dp),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Header Row: ChordPlay Logo + LIVE PREVIEW badge
+            // Header Row: PivMusic Logo + LIVE PREVIEW badge
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -170,7 +170,7 @@ fun AppearanceLivePreview(
                         modifier = Modifier.size(20.dp),
                     )
                     Text(
-                        text = "ChordPlay",
+                        text = "PivMusic",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = animatedPrimary,

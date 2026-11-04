@@ -799,7 +799,7 @@ private fun ReleaseHeader(
                         .padding(horizontal = 7.dp, vertical = 2.dp),
                 ) {
                     Text(
-                        text = "ChordPlay",
+                        text = "PivMusic",
                         style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,

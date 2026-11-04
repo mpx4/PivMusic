@@ -1,10 +1,10 @@
-# ChordPlay Design System & UI Specification
+# PivMusic Design System & UI Specification
 
 > **Version**: 1.0  
 > **Target Platforms**: Android (Compose) & Desktop (Compose Multiplatform)  
 > **Soul**: *Fluid Glassmorphism, Dynamic Artwork Aura, and Modular Tactility.*
 
-ChordPlay blends the fluid, frosted-glass elegance of **BitChord** with the structured, customizable, and preview-driven hierarchy of **Prism**. Every screen, dialog, and component built for ChordPlay must adhere to the principles in this document.
+PivMusic blends the fluid, frosted-glass elegance of **BitChord** with the structured, customizable, and preview-driven hierarchy of **Prism**. Every screen, dialog, and component built for PivMusic must adhere to the principles in this document.
 
 ---
 
@@ -58,7 +58,7 @@ ChordPlay blends the fluid, frosted-glass elegance of **BitChord** with the stru
 
 ## 3. Typography System
 
-ChordPlay prioritizes expressive typography over default system fonts:
+PivMusic prioritizes expressive typography over default system fonts:
 
 ### Font Families
 - **Display / Headings**: **Poppins** (SemiBold / Bold) for modern, clean, geometric musical headers.
@@ -92,7 +92,7 @@ labelSmall: fontSize = 11.sp, lineHeight = 14.sp, fontWeight = Medium, letterSpa
 
 ## 4. Settings & Customization Hierarchy *(The Prism Model)*
 
-Rather than one long continuous settings list, ChordPlay organizes settings into clean, modular categories with dedicated sub-sheets:
+Rather than one long continuous settings list, PivMusic organizes settings into clean, modular categories with dedicated sub-sheets:
 
 ```
 Settings Hub
@@ -118,7 +118,7 @@ Settings Hub
  │    ├── Offline Storage Path
  │    ├── Embedded Artwork & Metadata Quality
  │    └── Smart Cache Management
- └── ℹ️ About & ChordPlay
+ └── ℹ️ About & PivMusic
       ├── Version, Changelog & Upstream Credits
       └── GitHub, Releases & Contributor Links
 ```

@@ -1,4 +1,4 @@
-# Rule: ChordPlay Design System & UI Architecture
+# Rule: PivMusic Design System & UI Architecture
 
 When creating or modifying any UI in this repository, you MUST follow these guidelines:
 
@@ -6,7 +6,7 @@ When creating or modifying any UI in this repository, you MUST follow these guid
 - **Frosted Glass Depth**: Use multi-layer translucent surfaces with `Haze` blur and subtle 1dp border strokes (`Color.White.copy(alpha = 0.08f)`). Avoid flat opaque backgrounds.
 - **Dynamic Artwork Palette**: Tint background scrims and accents from the active song's artwork palette with strong contrast (WCAG AA).
 - **Physics-Based Springs**: All motion and transitions MUST use spring physics (`Spring.DampingRatioMediumBouncy`, `Spring.StiffnessLow`), never linear animations.
-- **Typography**: Adhere to the ChordPlay typography scale using **Poppins** for display/headings, **Parkinsans** for body/metadata, and support custom user fonts in the lyrics engine.
+- **Typography**: Adhere to the PivMusic typography scale using **Poppins** for display/headings, **Parkinsans** for body/metadata, and support custom user fonts in the lyrics engine.
 
 ## 2. Settings Architecture & Customizability (Prism Heritage)
 - **Modular Sub-pages**: Do NOT dump settings into a single 2,500-line monolithic sheet. Organize settings into clean, dedicated sub-screens:

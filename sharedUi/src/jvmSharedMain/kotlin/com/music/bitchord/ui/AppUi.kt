@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
  * either way. Installed once at start, beside [com.music.bitchord.ui.player.PlayerPlatform].
  */
 interface AppUiHost {
-    /** Visual design style (ChordPlay modern vs Classic BitChord). */
+    /** Visual design style (PivMusic modern vs Classic BitChord). */
     val appDesignStyle: StateFlow<AppDesignStyle>
         get() = MutableStateFlow(AppDesignStyle.CHORDPLAY)
 

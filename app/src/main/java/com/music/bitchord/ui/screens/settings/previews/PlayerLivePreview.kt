@@ -58,12 +58,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.music.bitchord.data.settings.AppDesignStyle
 import com.music.bitchord.data.settings.AppSettings
-import com.music.bitchord.data.settings.ChordPlayPalette
+import com.music.bitchord.data.settings.PivMusicPalette
 import com.music.bitchord.data.settings.PlayerLayoutMode
 import com.music.bitchord.ui.icons.BitChordIcons
 
 /**
- * Pinned live interactive player preview faithfully mirroring the real ChordPlay
+ * Pinned live interactive player preview faithfully mirroring the real PivMusic
  * Now Playing experience with 1:1 authentic layout, atmosphere, and playback controls.
  */
 @Composable
@@ -81,11 +81,11 @@ fun PlayerLivePreview(
         customPalettes.firstOrNull { it.id == id }
     }
 
-    val isChordPlay = designStyle == AppDesignStyle.CHORDPLAY
+    val isPivMusic = designStyle == AppDesignStyle.CHORDPLAY
     val activePrimary = if (activeCustomPalette != null) {
         Color(activeCustomPalette.primaryHex)
-    } else if (isChordPlay) {
-        if (palette == ChordPlayPalette.DYNAMIC_MONET) {
+    } else if (isPivMusic) {
+        if (palette == PivMusicPalette.DYNAMIC_MONET) {
             MaterialTheme.colorScheme.primary
         } else {
             Color(palette.primaryColorHex)
@@ -96,8 +96,8 @@ fun PlayerLivePreview(
 
     val activeSecondary = if (activeCustomPalette != null) {
         Color(activeCustomPalette.secondaryHex)
-    } else if (isChordPlay) {
-        if (palette == ChordPlayPalette.DYNAMIC_MONET) {
+    } else if (isPivMusic) {
+        if (palette == PivMusicPalette.DYNAMIC_MONET) {
             MaterialTheme.colorScheme.secondary
         } else {
             Color(palette.secondaryColorHex)
