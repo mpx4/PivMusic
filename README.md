@@ -33,6 +33,25 @@ The PivMusic fork is maintained by **Yan / mpx4** and is based on ChordPlay, whi
 
 PivMusic is intended for personal and educational use. The availability of online features depends on the corresponding service, network connection and account status.
 
+## Screenshots
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" width="25%"><b>Home</b></td>
+      <td align="center" width="25%"><b>Discovery</b></td>
+      <td align="center" width="25%"><b>Player</b></td>
+      <td align="center" width="25%"><b>Lyrics</b></td>
+    </tr>
+    <tr>
+      <td valign="top"><img src="Images/UI/pivmusic_home.jpg" width="220" alt="PivMusic home screen" /></td>
+      <td valign="top"><img src="Images/UI/pivmusic_discovery.jpg" width="220" alt="PivMusic discovery screen" /></td>
+      <td valign="top"><img src="Images/UI/pivmusic_player.jpg" width="220" alt="PivMusic player screen" /></td>
+      <td valign="top"><img src="Images/UI/pivmusic_lyrics.jpg" width="220" alt="PivMusic synchronized lyrics" /></td>
+    </tr>
+  </table>
+</div>
+
 ## Features
 
 ### Music discovery and library
