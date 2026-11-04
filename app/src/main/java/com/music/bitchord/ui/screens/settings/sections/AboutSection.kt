@@ -304,7 +304,7 @@ fun AboutSection(
             SettingsRow(
                 icon = Icons.Rounded.OpenInNew,
                 title = "GitHub Repository",
-                subtitle = "code4nigel/PivMusic",
+                subtitle = "mpx4/PivMusic",
                 onClick = {
                     runCatching {
                         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mpx4/PivMusic")))
@@ -326,10 +326,10 @@ fun AboutSection(
             SettingsRow(
                 icon = Icons.Rounded.OpenInNew,
                 title = "Developer Profile",
-                subtitle = "github.com/code4nigel",
+                subtitle = "github.com/mpx4",
                 onClick = {
                     runCatching {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/code4nigel")))
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mpx4")))
                     }
                 },
             )
@@ -355,12 +355,12 @@ fun AboutSection(
                         textDecoration = TextDecoration.Underline,
                     ),
                 )
-                append("PivMusic $version by Shivanshu (code4nigel)\n")
+                append("PivMusic $version by Yan (mpx4)\n")
                 withLink(LinkAnnotation.Url("https://github.com/mpx4/PivMusic", linkStyles)) {
                     append("GitHub")
                 }
                 append("   ")
-                withLink(LinkAnnotation.Url("https://github.com/code4nigel", linkStyles)) {
+                withLink(LinkAnnotation.Url("https://github.com/mpx4", linkStyles)) {
                     append("Developer")
                 }
                 append("   ")

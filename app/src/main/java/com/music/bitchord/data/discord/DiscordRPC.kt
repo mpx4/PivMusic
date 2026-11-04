@@ -2,6 +2,7 @@ package com.music.bitchord.data.discord
 
 import android.content.Context
 import com.music.bitchord.R
+import com.music.bitchord.data.TrackLog
 import com.music.bitchord.data.model.Song
 import com.music.bitchord.data.model.artworkAt
 import com.my.kizzy.rpc.KizzyRPC
@@ -68,6 +69,11 @@ class DiscordRPC(
         activityName: String = "",
         audioQuality: String? = null,
     ) = runCatching {
+        TrackLog.d(
+            "DiscordRPC",
+            "presence push start tokenConfigured=true gatewayConnected=${isRpcRunning()} song=${song.videoId}",
+            about = song.videoId,
+        )
         val currentTime = System.currentTimeMillis()
 
         val adjustedPlaybackTime = (currentPlaybackTimeMillis / playbackSpeed).toLong()
@@ -138,6 +144,18 @@ class DiscordRPC(
             endTime = currentTime + adjustedRemainingDuration,
             applicationId = APPLICATION_ID,
             status = status,
+        )
+        TrackLog.d(
+            "DiscordRPC",
+            "presence push accepted gatewayConnected=${isRpcRunning()} song=${song.videoId}",
+            about = song.videoId,
+        )
+    }.onFailure {
+        TrackLog.e(
+            "DiscordRPC",
+            "presence push failed type=${it::class.simpleName} message=${it.message ?: "<no message>"}",
+            it,
+            about = song.videoId,
         )
     }
 

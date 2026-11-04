@@ -6258,6 +6258,11 @@ class PlaybackService : MediaLibraryService() {
             ) { token, enabled -> token.takeIf { enabled && it.isNotBlank() } }
                 .distinctUntilChanged()
                 .collectLatest { token ->
+                    TrackLog.d(
+                        "DiscordRPC",
+                        "settings changed enabledToken=${token != null} tokenLength=${token?.length ?: 0}",
+                        about = null,
+                    )
                     // Torn down before anything is built, so switching accounts
                     // can't leave the old one's socket up publishing under a
                     // profile the user has just disconnected.
@@ -6288,6 +6293,7 @@ class PlaybackService : MediaLibraryService() {
 
                     if (token == null) return@collectLatest
                     discordRpc = DiscordRPC(this@PlaybackService, token)
+                    TrackLog.d("DiscordRPC", "client created; waiting for playback", about = null)
                     // A presence that only appeared at the next track change
                     // would make turning the switch on look like it had done
                     // nothing for the length of a song.
@@ -6378,8 +6384,14 @@ class PlaybackService : MediaLibraryService() {
      * track change.
      */
     private fun pushDiscordPresence(exoPlayer: ExoPlayer) {
-        val rpc = discordRpc ?: return
-        val song = exoPlayer.currentMediaItem?.toSong() ?: return
+        val rpc = discordRpc ?: run {
+            TrackLog.w("DiscordRPC", "presence skipped: client is not configured", about = null)
+            return
+        }
+        val song = exoPlayer.currentMediaItem?.toSong() ?: run {
+            TrackLog.w("DiscordRPC", "presence skipped: current media item has no song", about = null)
+            return
+        }
         // Read on the main thread, before the push is handed to IO: by the time
         // a coroutine gets to run, the queue may have moved on, and ExoPlayer's
         // state is only legal to read from the thread it was built on.

@@ -573,12 +573,12 @@ private fun SettingsFooter(version: String, modifier: Modifier = Modifier) {
                     textDecoration = TextDecoration.Underline,
                 ),
             )
-            append("PivMusic $version by Shivanshu (code4nigel)\n")
+            append("PivMusic $version by Yan (mpx4)\n")
             withLink(LinkAnnotation.Url("https://github.com/mpx4/PivMusic", linkStyles)) {
                 append("GitHub")
             }
             append("   ")
-            withLink(LinkAnnotation.Url("https://github.com/code4nigel", linkStyles)) {
+            withLink(LinkAnnotation.Url("https://github.com/mpx4", linkStyles)) {
                 append("Developer")
             }
             append("   ")
