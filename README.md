@@ -25,7 +25,7 @@
 
 PivMusic is an independent music player and YouTube Music client for Android. It combines online discovery, local playback, synchronized lyrics, downloads, playlists, audio controls and a highly customizable interface in one application.
 
-The project is developed by **Yan / mpx4** and is based on open-source work from BitChord and other projects listed in the [Credits](#credits) section. PivMusic is not affiliated with Google, YouTube, Discord or any of the services it integrates with.
+The PivMusic fork is maintained by **Yan / mpx4** and is based on ChordPlay, which in turn is based on BitChord. PivMusic is not affiliated with Google, YouTube, Discord or any of the services it integrates with.
 
 > **Package name:** `com.music.piv.lol`
 >
@@ -157,11 +157,12 @@ Some optional features read local build configuration from `local.properties` or
 
 ## Credits
 
-PivMusic would not exist without the open-source projects and contributors whose work made its architecture possible.
+PivMusic would not exist without the open-source projects and contributors whose work made its architecture possible. The project lineage is **BitChord → ChordPlay → PivMusic**.
 
 | Project | Author | Contribution or inspiration |
 |---|---|---|
 | [BitChord](https://github.com/kushagrasinghx/BitChord) | Kushagra Singh and contributors | Foundational architecture and music playback components |
+| [ChordPlay](https://github.com/code4nigel/ChordPlay) | Shivanshu / code4nigel | Intermediate fork, visual changes and additional project modifications |
 | [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor) | NewPipe team | YouTube stream extraction |
 | [Haze](https://github.com/chrisbanes/haze) | Chris Banes | Blur and frosted-glass rendering |
 | [am-lyrics](https://github.com/binimum/am-lyrics) | binimum | Synchronized lyrics concepts |
@@ -181,6 +182,7 @@ When reporting a bug, include the PivMusic version, Android version, device arch
 PivMusic is distributed under the **GNU General Public License v3.0 (GPLv3)**.
 
 - BitChord: Copyright (C) 2024–2026 Kushagra Singh and BitChord contributors.
+- ChordPlay modifications and additions: Copyright (C) 2026 Shivanshu (code4nigel).
 - PivMusic modifications and additions: Copyright (C) 2026 Yan (mpx4).
 
 See the [LICENSE](LICENSE) file for the full text of the GNU GPLv3.
