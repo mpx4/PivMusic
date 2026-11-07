@@ -1,15 +1,20 @@
-# PivMusic v2.0.11 — Playlist, Biblioteca e Desempenho
+# PivMusic v2.0.11 — Playlists, Library & Lyrics Update
 
-Esta atualização incorpora seletivamente melhorias do ChordPlay v2.0.5–v2.0.7, preservando o editor local de letras, traduções offline, Discord RPC, identidade PivMusic e atualização pelo GitHub.
+PivMusic 2.0.11 selectively incorporates upstream improvements from ChordPlay 2.0.5–2.0.7 while preserving PivMusic's local lyrics editor, offline translations, Discord Rich Presence, branding, and GitHub update checker.
 
-### Novidades da PivMusic 2.0.11:
-- **Playlist Picker aprimorado** com organização e interações atualizadas para adicionar músicas às playlists.
-- **Biblioteca local aprimorada** com melhorias na organização da música local e histórico recente.
-- **Cache de playlists otimista** para tornar alterações de associação mais rápidas na interface.
-- **Correções no repositório de música** para shelves de vídeos, rádio e carregamento de conteúdo.
-- **Correções de compatibilidade** mantendo as letras editadas localmente, timestamps enhanced LRC e traduções manuais linha por linha.
+### What's new in PivMusic 2.0.11:
+- **Improved Playlist Picker** with a cleaner organization and smoother interactions for adding songs to playlists.
+- **Improved Local Music Library** with better organization for local songs and recent listening history.
+- **Optimistic Playlist Membership Cache** so playlist changes appear faster in the interface while the server request completes.
+- **Music Repository Fixes** for video shelves, radio loading, and content retrieval.
+- **Plain-text lyrics are now saved locally**, even when the lyrics do not contain timestamps.
+- **Enhanced LRC timing is preserved**, including word-by-word timestamps when lyrics are edited or stored locally.
+- **Lyrics copying preserves detailed timing** instead of flattening word-level timestamps into ordinary line timestamps.
+- **Manual offline translations remain persistent line by line**, including replacement and correction of existing translations.
+- **Online and local translation priority remains stable**, so the local clipboard translation can be restored after disabling online translation.
+- **Existing Discord RPC, automatic GitHub update detection, and offline lyric editing behavior remain preserved.**
 
-As partes upstream que dependem do novo armazenamento oficial de letras offline e do fluxo completo de downloads foram deixadas fora desta etapa para não substituir as implementações próprias do PivMusic.
+The upstream offline-lyrics storage and full download-flow rewrites were intentionally not copied wholesale because they would replace PivMusic's tested local lyrics implementation. PivMusic keeps its own compatible implementation for plain text, line timing, enhanced LRC, and manual translations.
 
 ---
 
