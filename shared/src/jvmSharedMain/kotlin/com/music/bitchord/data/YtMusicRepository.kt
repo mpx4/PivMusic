@@ -247,6 +247,42 @@ object YtMusicRepository {
         allHomeTrackSongs.ifEmpty { exploreSongs }
     }
 
+    suspend fun homeQuickPicksShelf(): Result<HomeShelf?> = call("home:quickPicks") {
+        val songs = quickPicks().getOrNull().orEmpty().take(20)
+        if (songs.isEmpty()) null
+        else HomeShelf(
+            title = "Quick picks",
+            items = songs.map { ShelfItem(it.title, it.artist, it.thumbnailUrl, it.videoId, null) },
+            subtitle = "Start a radio from a song",
+        )
+    }
+
+    suspend fun homeRemixesShelf(): Result<HomeShelf?> = call("home:remixes") {
+        val response = Innertube.search("trending remixes club mix", SearchFilter.SONGS.params)
+        val tracks = InnertubeParser.parseSearchPage(response).rows.mapNotNull {
+            (it as? SearchResult.Track)?.song ?: (it as? SearchResult.TopTrack)?.song
+        }
+        if (tracks.isEmpty()) null
+        else HomeShelf(
+            title = "Remixes & Edits",
+            items = tracks.take(12).map { ShelfItem(it.title, it.artist, it.thumbnailUrl, it.videoId, null) },
+            subtitle = "Club mixes, VIPs & reimagined cuts",
+        )
+    }
+
+    suspend fun homeMusicVideosShelf(): Result<HomeShelf?> = call("home:videos") {
+        val response = Innertube.search("official music videos hits", SearchFilter.VIDEOS.params)
+        val tracks = InnertubeParser.parseSearchPage(response, includeVideos = true).rows.mapNotNull {
+            (it as? SearchResult.Track)?.song ?: (it as? SearchResult.TopTrack)?.song
+        }
+        if (tracks.isEmpty()) null
+        else HomeShelf(
+            title = "Music Videos for You",
+            items = tracks.take(12).map { ShelfItem(it.title, it.artist, it.thumbnailUrl, it.videoId, null) },
+            subtitle = "16:9 widescreen official videos",
+        )
+    }
+
     private const val HISTORY = "FEmusic_history"
     private const val RECENT_TITLE = "Recents"
 
@@ -645,15 +681,51 @@ object YtMusicRepository {
      * being read — see [moreSongs].
      */
     suspend fun browseSongs(browseId: String): Result<SongPage> = call("browse:$browseId") {
-        val response = Innertube.browse(browseId)
-        val page = if (browseId.startsWith("MPREb")) {
-            albumPageOf(response)
+        val isRadioMix = browseId.startsWith("RD") || browseId.startsWith("VLRD")
+        val isSongRadio = browseId.startsWith("RDAMVM") || browseId.startsWith("VLRDAMVM")
+        // Radio mixes based on a specific song (RDAMVM) have no /browse endpoint in YouTube Music.
+        // For other IDs, attempt /browse safely without letting an HTTP 400 error crash the call.
+        val response = if (isSongRadio) {
+            null
         } else {
-            pageOf(response)
+            runCatching { Innertube.browse(browseId) }.getOrNull()
+        }
+
+        val initialPage = when {
+            response == null -> SongPage(songs = emptyList(), continuation = null)
+            browseId.startsWith("MPREb") -> albumPageOf(response)
+            else -> pageOf(response)
+        }
+
+        val page = if (isRadioMix && initialPage.songs.isEmpty()) {
+            val cleanId = browseId.removePrefix("VL")
+            val rawVid = cleanId.removePrefix("RDAMVM")
+            val validVid = rawVid.takeIf { cleanId.startsWith("RDAMVM") && it.length == 11 && !it.startsWith("RD") }
+
+            var radioSongs = runCatching {
+                InnertubeParser.parseWatchQueue(Innertube.next(validVid ?: return@runCatching emptyList()))
+            }.getOrElse { emptyList() }
+
+            if (radioSongs.isEmpty() && validVid != null) {
+                radioSongs = runCatching {
+                    InnertubeParser.parseWatchQueue(Innertube.next(videoId = validVid))
+                }.getOrElse { emptyList() }
+            }
+
+            initialPage.copy(
+                songs = radioSongs,
+                header = initialPage.header ?: InnertubeParser.BrowseHeader(
+                    title = "Mix",
+                    subtitle = "YouTube Music Mix",
+                    thumbnailUrl = radioSongs.firstOrNull()?.thumbnailUrl,
+                ),
+            )
+        } else {
+            initialPage
         }
         // Only a playlist has an owner in the sense that matters — see
         // parsePlaylistOwned — and only its own first response can be asked.
-        if (!browseId.startsWith("VL")) page
+        if (!browseId.startsWith("VL") || response == null) page
         else page.copy(owned = InnertubeParser.parsePlaylistOwned(response))
     }
 

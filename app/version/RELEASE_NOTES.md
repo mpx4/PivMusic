@@ -1,3 +1,18 @@
+# PivMusic v2.0.11 — Playlist, Biblioteca e Desempenho
+
+Esta atualização incorpora seletivamente melhorias do ChordPlay v2.0.5–v2.0.7, preservando o editor local de letras, traduções offline, Discord RPC, identidade PivMusic e atualização pelo GitHub.
+
+### Novidades da PivMusic 2.0.11:
+- **Playlist Picker aprimorado** com organização e interações atualizadas para adicionar músicas às playlists.
+- **Biblioteca local aprimorada** com melhorias na organização da música local e histórico recente.
+- **Cache de playlists otimista** para tornar alterações de associação mais rápidas na interface.
+- **Correções no repositório de música** para shelves de vídeos, rádio e carregamento de conteúdo.
+- **Correções de compatibilidade** mantendo as letras editadas localmente, timestamps enhanced LRC e traduções manuais linha por linha.
+
+As partes upstream que dependem do novo armazenamento oficial de letras offline e do fluxo completo de downloads foram deixadas fora desta etapa para não substituir as implementações próprias do PivMusic.
+
+---
+
 # ChordPlay v2.0.2 — Modern Search, Preserve Style & Typography Release
 
 Welcome to ChordPlay v2.0.2! This release modernizes the search experience inspired by BitChord, introduces custom theme preservation, expands lyrics typography weights, and polishes queue interaction:
