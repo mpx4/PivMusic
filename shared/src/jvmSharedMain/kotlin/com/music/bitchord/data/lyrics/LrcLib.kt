@@ -82,15 +82,28 @@ object LrcLib {
     }
 
     /**
-     * `[mm:ss.xx] words`. Metadata tags carry no timestamp and fall out on
-     * their own. A stamp with no words marks an instrumental break; those are
-     * kept, but only where the silence is long enough to be worth showing —
-     * otherwise the line would blink out between two sung phrases. A stamp
-     * with nothing after it closes the final line, so it always survives.
+     * Parses both timestamped LRC and ordinary plain-text lyrics. Metadata
+     * tags carry no timestamp and fall out on their own. A stamp with no words
+     * marks an instrumental break; those are kept, but only where the silence
+     * is long enough to be worth showing — otherwise the line would blink out
+     * between two sung phrases. A stamp with nothing after it closes the final
+     * line, so it always survives.
+     *
+     * Plain rows use time zero and retain their input order. This matters for
+     * local editing: [toLrc] intentionally writes unsynced lyrics without
+     * brackets, so dropping rows without a stamp here made every unsynced edit
+     * disappear as soon as it was saved and read back.
      */
     fun parseLrc(lrc: String): List<LyricLine> {
         val all = lrc.lineSequence().mapNotNull { line ->
-            val match = STAMP.find(line) ?: return@mapNotNull null
+            val cleanLine = line.trimEnd('\r')
+            val match = STAMP.find(cleanLine)
+            if (match == null) {
+                val plain = cleanLine.trim()
+                return@mapNotNull plain
+                    .takeUnless { it.isBlank() || METADATA.matches(it) }
+                    ?.let { LyricLine(timeMs = 0L, text = it) }
+            }
             val (minutes, seconds, fraction) = match.destructured
             // Two digits mean centiseconds, three mean milliseconds.
             val fractionMs = when (fraction.length) {
@@ -98,7 +111,7 @@ object LrcLib {
                 3 -> fraction.toLong()
                 else -> 0L
             }
-            val body = line.substring(match.range.last + 1)
+            val body = cleanLine.substring(match.range.last + 1)
             // Detect the RTL marker that was written by [toEnhancedLrc].
             val (text, alignment) = stripAlignmentMarker(body)
             LyricLine(
@@ -201,6 +214,7 @@ object LrcLib {
 
     private val STAMP = Regex("""\[(\d{1,2}):(\d{2})[.:](\d{2,3})]""")
     private val WORD_STAMP = Regex("""<(\d{1,3}):(\d{2})[.:](\d{2,3})>""")
+    private val METADATA = Regex("""\[[A-Za-z]{1,8}:.*]""")
     private val NOISE = Regex(
         """\((?:from|feat\.?|official|lyrical|video|audio|remix)[^)]*\)|\[[^]]*]|""" +
             """\b(?:official (?:video|audio|music video)|lyrical|full song|4k video)\b""",

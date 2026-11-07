@@ -92,4 +92,20 @@ class LrcLibTest {
         val sung = lines.filterNot { it.isGap }
         assertTrue(sung[0].timeMs < sung[1].timeMs)
     }
+
+    @Test
+    fun `keeps plain unsynced lyric rows`() {
+        val lines = LrcLib.parseLrc("first line\nsecond line")
+        assertEquals(listOf("first line", "second line"), lines.words())
+        assertTrue(lines.all { it.timeMs == 0L })
+    }
+
+    @Test
+    fun `keeps enhanced word timestamps`() {
+        val lines = LrcLib.parseLrc(
+            "[00:01.00]<00:01.00>first <00:01.40>words <00:02.00>",
+        ).filterNot { it.isGap }
+        assertTrue(lines.single().isWordSynced)
+        assertEquals(listOf(1_000L, 1_400L), lines.single().words.map { it.startMs })
+    }
 }

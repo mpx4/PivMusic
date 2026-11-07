@@ -77,6 +77,13 @@ fun List<LyricLine>.toEnhancedLrc(): String {
     return sortedBy { it.timeMs }.joinToString("\n") { line -> stamp(line.timeMs) + line.enhancedBody() }
 }
 
+/**
+ * Representation used by the local editor/store: preserve A2 word timing when
+ * present, otherwise use ordinary LRC/plain text.
+ */
+fun List<LyricLine>.toLocalLyricsText(): String =
+    toEnhancedLrc().ifBlank { toLrc() }
+
 /** Marker that survives round-trip through file tags and signals RTL (End) alignment. */
 private const val ALIGNMENT_MARKER = "<R>"
 

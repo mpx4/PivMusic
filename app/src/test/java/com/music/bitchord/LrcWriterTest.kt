@@ -4,6 +4,7 @@ import com.music.bitchord.data.lyrics.LrcLib
 import com.music.bitchord.data.lyrics.LyricLine
 import com.music.bitchord.data.lyrics.LyricWord
 import com.music.bitchord.data.lyrics.toLrc
+import com.music.bitchord.data.lyrics.toLocalLyricsText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -91,6 +92,24 @@ class LrcWriterTest {
         val written = lines.toLrc()
         assertEquals("[00:01.00]two words", written)
         assertTrue("no word stamps", '<' !in written)
+    }
+
+    @Test
+    fun `local lyrics text keeps word timings`() {
+        val lines = listOf(
+            LyricLine(
+                timeMs = 1_000L,
+                text = "two words",
+                words = listOf(
+                    LyricWord(startMs = 1_000L, endMs = 1_400L, text = "two"),
+                    LyricWord(startMs = 1_400L, endMs = 2_000L, text = "words"),
+                ),
+            ),
+        )
+        val written = lines.toLocalLyricsText()
+        assertTrue("word stamps are preserved", '<' in written)
+        val reparsed = LrcLib.parseLrc(written).single()
+        assertEquals(listOf(1_000L, 1_400L), reparsed.words.map { it.startMs })
     }
 
     /**

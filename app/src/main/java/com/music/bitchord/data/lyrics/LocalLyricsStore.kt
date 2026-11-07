@@ -27,7 +27,7 @@ class LocalLyricsStore(context: Context) {
 
     fun save(trackId: String, lines: List<LyricLine>, translation: List<LyricLine>?, languageTag: String?) {
         preferences.edit().apply {
-            putString(key(LYRICS, trackId), lines.toLrc())
+            putString(key(LYRICS, trackId), lines.toLocalLyricsText())
             if (!languageTag.isNullOrBlank()) {
                 // Store the canonical app-language key. Also retain the exact
                 // requested tag for compatibility with pre-canonical callers.
@@ -40,9 +40,9 @@ class LocalLyricsStore(context: Context) {
                         remove(key(TRANSLATIONS, "$trackId|$candidate"))
                     }
                 } else {
-                    putString(key(TRANSLATIONS, "$trackId|$canonical"), translation.toLrc())
+                    putString(key(TRANSLATIONS, "$trackId|$canonical"), translation.toLocalLyricsText())
                     if (canonical != languageTag) {
-                        putString(key(TRANSLATIONS, "$trackId|$languageTag"), translation.toLrc())
+                        putString(key(TRANSLATIONS, "$trackId|$languageTag"), translation.toLocalLyricsText())
                     }
                 }
             }

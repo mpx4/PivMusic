@@ -132,6 +132,7 @@ import com.music.bitchord.data.lyrics.LyricAlignment
 import com.music.bitchord.data.lyrics.LyricLine
 import com.music.bitchord.data.lyrics.LrcLib
 import com.music.bitchord.data.lyrics.toLrc
+import com.music.bitchord.data.lyrics.toEnhancedLrc
 import com.music.bitchord.data.lyrics.LyricsSource
 import com.music.bitchord.data.lyrics.translationLanguageName
 import com.music.bitchord.ui.haptics.Haptic
@@ -2398,7 +2399,9 @@ private fun LocalLyricsEditorDialog(
     onDismiss: () -> Unit,
     onSave: (List<LyricLine>, List<LyricLine>?) -> Unit,
 ) {
-    var lrcText by remember(trackId, initialLines) { mutableStateOf(initialLines.toLrc()) }
+    var lrcText by remember(trackId, initialLines) {
+        mutableStateOf(initialLines.toEnhancedLrc().ifBlank { initialLines.toLrc() })
+    }
     var translationText by remember(trackId, initialLines, initialTranslation) {
         val byTimestamp = initialTranslation.orEmpty().groupBy { it.timeMs }
         mutableStateOf(
@@ -2435,13 +2438,21 @@ private fun LocalLyricsEditorDialog(
                 // Keep the editor's rows attached to the original timestamp.
                 // This means a reordered/inserted LRC line cannot inherit a
                 // neighbouring translation merely because its list index moved.
-                val valueByTimestamp = initialLines.mapIndexedNotNull { index, line ->
-                    values.getOrNull(index)?.trim()?.let { line.timeMs to it }
-                }.toMap()
-                val translated = edited.mapNotNull { line ->
-                    valueByTimestamp[line.timeMs]
-                        ?.takeIf(String::isNotEmpty)
-                        ?.let { LyricLine(line.timeMs, it) }
+                val translated = if (initialLines.none { it.timeMs > 0L }) {
+                    edited.mapIndexedNotNull { index, line ->
+                        values.getOrNull(index)?.trim()
+                            ?.takeIf(String::isNotEmpty)
+                            ?.let { LyricLine(line.timeMs, it) }
+                    }
+                } else {
+                    val valueByTimestamp = initialLines.mapIndexedNotNull { index, line ->
+                        values.getOrNull(index)?.trim()?.let { line.timeMs to it }
+                    }.toMap()
+                    edited.mapNotNull { line ->
+                        valueByTimestamp[line.timeMs]
+                            ?.takeIf(String::isNotEmpty)
+                            ?.let { LyricLine(line.timeMs, it) }
+                    }
                 }
                 onSave(edited, translated)
             }) { Text("Save") }
