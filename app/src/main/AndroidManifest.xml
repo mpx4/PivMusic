@@ -195,6 +195,19 @@
                 <data android:host="youtu.be" />
             </intent-filter>
 
+            <!-- Public PivMusic track shares. assetlinks.json on music.piv.lol
+                 verifies the production package and opens these URLs directly
+                 in PivMusic instead of showing a chooser. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="music.piv.lol"
+                    android:pathPrefix="/t/" />
+            </intent-filter>
+
             <!-- Public Listen Together invites. autoVerify makes a tap open
                  BitChord directly once the domain publishes its assetlinks
                  association for the production signing certificate. -->

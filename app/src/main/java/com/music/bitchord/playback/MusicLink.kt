@@ -108,6 +108,12 @@ object MusicLink {
     fun parse(uri: Uri): LinkRequest? {
         val host = uri.host?.lowercase()?.removePrefix("www.") ?: return null
         val segments = uri.pathSegments.orEmpty()
+        if (host == "music.piv.lol") {
+            return when (segments.firstOrNull()) {
+                "t" -> segments.getOrNull(1)?.let(::track)
+                else -> null
+            }
+        }
         if (host == "youtu.be") {
             return segments.firstOrNull()?.let(::track)
         }

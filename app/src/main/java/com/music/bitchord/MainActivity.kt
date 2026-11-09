@@ -4160,7 +4160,7 @@ private fun BitChordApp(
             val share: () -> Unit = {
                 val sendIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_TEXT, "https://music.youtube.com/watch?v=${song.videoId}")
+                    putExtra(Intent.EXTRA_TEXT, "https://music.piv.lol/t/${song.videoId}")
                 }
                 context.startActivity(Intent.createChooser(sendIntent, song.title))
                 songActions = null
