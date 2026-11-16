@@ -1,6 +1,6 @@
-# PivMusic v2.0.11 — Playlists, Library & Lyrics Update
+# PivMusic v2.0.12 — Share Links & Addon Quality
 
-PivMusic 2.0.11 selectively incorporates upstream improvements from ChordPlay 2.0.5–2.0.7 while preserving PivMusic's local lyrics editor, offline translations, Discord Rich Presence, branding, and GitHub update checker.
+PivMusic 2.0.12 adds PivMusic share links, Android App Links, rich Discord previews, and selectable addon quality while preserving PivMusic's local lyrics editor, offline translations, Discord Rich Presence, branding, and GitHub update checker.
 
 ### What's new in PivMusic 2.0.11:
 - **Improved Playlist Picker** with a cleaner organization and smoother interactions for adding songs to playlists.

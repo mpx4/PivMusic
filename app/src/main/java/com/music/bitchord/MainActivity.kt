@@ -2801,6 +2801,7 @@ private fun BitChordApp(
                         SourcesScreen(
                             contentPadding = listPadding,
                             onEditSource = { editingSource = it },
+                            onChooseSourceQuality = { choosingSourceQuality = it },
                             onEditWebDav = { showWebDavEditor = true },
                             onEditSmb = { showSmbEditor = true },
                             onConfirmJioSaavn = { confirmJioSaavn = true },

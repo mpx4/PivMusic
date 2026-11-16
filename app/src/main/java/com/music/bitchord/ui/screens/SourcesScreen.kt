@@ -29,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Bluetooth
 import androidx.compose.material.icons.rounded.Cloud
+import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.DeleteSweep
 import androidx.compose.material.icons.rounded.Dns
 import androidx.compose.material.icons.rounded.DragHandle
@@ -838,7 +839,7 @@ private fun SourceRow(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
-                        imageVector = SfIcons.Tune,
+                        imageVector = Icons.Rounded.Tune,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(14.dp),
@@ -854,7 +855,7 @@ private fun SourceRow(
                     )
                     Spacer(Modifier.width(2.dp))
                     Icon(
-                        imageVector = SfIcons.ChevronRight,
+                        imageVector = Icons.Rounded.ChevronRight,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(10.dp),
